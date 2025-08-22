@@ -69,12 +69,12 @@ export default function Home({ subjects }) {
   );
 
   return (
-    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-gray-100">
+    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-gray-100 transition">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Pharmacy Test Dashboard</h1>
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className="px-3 py-1 rounded-lg border dark:border-gray-600"
+          className="px-3 py-1 rounded-lg border dark:border-gray-600 bg-gray-200 dark:bg-gray-700"
         >
           {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
         </button>
@@ -96,7 +96,7 @@ export default function Home({ subjects }) {
           >
             <button
               onClick={() => toggle(subject)}
-              className="flex justify-between items-center w-full"
+              className="flex justify-between items-center w-full text-left"
             >
               <h2 className="text-lg font-semibold">
                 {subject} ({filteredSubjects[subject].length} tests)
