@@ -13,9 +13,22 @@ export async function getStaticProps() {
       let testName = file.replace(".html", "");
 
       if (file.includes("__")) {
+        // Case 1: Double underscore
         const parts = file.split("__");
-        subject = parts[0]; // before "__"
-        testName = parts[1].replace(".html", ""); // after "__"
+        subject = parts[0];
+        testName = parts[1].replace(".html", "");
+      } else if (file.includes("_Test_")) {
+        // Case 2: Split around "_Test_"
+        const parts = file.split("_Test_");
+        subject = parts[0] + "_Test";
+        testName = parts[1].replace(".html", "");
+      } else {
+        // Case 3: fallback = split at last underscore
+        const idx = file.lastIndexOf("_");
+        if (idx !== -1) {
+          subject = file.substring(0, idx);
+          testName = file.substring(idx + 1).replace(".html", "");
+        }
       }
 
       if (!subjects[subject]) subjects[subject] = [];
@@ -25,6 +38,7 @@ export async function getStaticProps() {
 
   return { props: { subjects } };
 }
+
 
 export default function Home({ subjects }) {
   const [query, setQuery] = useState("");
