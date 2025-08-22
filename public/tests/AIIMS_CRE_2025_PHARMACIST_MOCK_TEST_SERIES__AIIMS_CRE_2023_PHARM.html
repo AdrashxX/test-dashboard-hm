@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIIMS CRE 2023 PHARMACIST MOCK TEST 01</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--border:#e6eaf3;--text:#0b192d;--muted:#6b7280;--blue:#2b8ef6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--purple:#7c3aed;--shadow:0 2px 12px rgba(2,6,23,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+/* Top bar */
+.top{background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.bcrumb{font-weight:700} .bchip{margin-left:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#374151;border-radius:8px;padding:3px 8px;font-weight:700}
+.tsp{flex:1} .timer{background:#eef2ff;border:1px solid #c7d2fe;padding:4px 10px;border-radius:8px;font-weight:700}
+/* Main layout */
+.main{display:grid;grid-template-columns:1fr 340px;gap:16px;max-width:1200px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+/* Question header row (marking + timer + review) */
+.qhdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:700}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534} .pill.red{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+.qwrap{padding:16px}
+.qid{color:#6b7280;font-size:13px;margin-bottom:6px}
+.qtext{font-weight:700;line-height:1.6;margin:6px 0 14px 0}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;background:#fff;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;background:#fff}
+.opt.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,142,246,.15)}
+/* bottom actions */
+.bottom{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:#fff}
+.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn.ghost{background:#f8fafc}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Sidebar */
+.sidebar{padding:12px}
+.user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.uav{width:44px;height:44px;border-radius:50%;background:#fee2e2;color:#7f1d1d;font-weight:800;display:flex;align-items:center;justify-content:center}
+.uname{font-weight:700}
+.stat{border-top:1px solid var(--border);padding-top:10px;margin-top:6px}
+.statrow{display:flex;align-items:center;gap:8px;margin:8px 0;color:#111827}
+.sdot{width:10px;height:10px;border-radius:50%}
+.sgreen{background:#22c55e}.sred{background:#ef4444}.sgrey{background:#94a3b8}.spurple{background:#7c3aed}
+.palet{margin-top:10px;border-top:1px solid var(--border);padding-top:12px}
+.palgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.p{height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.p.active{outline:2px solid var(--purple)} .p.answered{background:#ecfdf5;border-color:#bbf7d0} .p.not-answered{background:#fee2e2;border-color:#fecaca}
+.subwrap{position:sticky;bottom:0;background:#fff;padding-top:12px}
+.submit{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--blue);background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+/* Result screen */
+.result{display:none;max-width:760px;margin:16px auto}
+.rbox{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.score{font-weight:900;font-size:36px;color:var(--blue);text-align:center}
+.subtle{text-align:center;color:#6b7280}
+.sol{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0}
+.sol .ok{background:#ecfdf5;border:1px solid #bbf7d0;border-radius:8px;padding:8px;margin:6px 0}
+.sol .bad{background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:8px;margin:6px 0}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="bcrumb">AIIMS CRE 2023 PHARMACIST MOCK TEST 01</div>
+    <span class="bchip">Non Pharma</span>
+    <div class="tsp"></div>
+    <div class="timer">Time Left: <span id="timer">--:--</span></div>
+  </div>
+
+  <div id="exam" class="main">
+    <!-- Center paper -->
+    <section class="card">
+      <div class="qhdr">
+        <div class="pill green">+4</div>
+        <div class="pill red">-1</div>
+        <div style="flex:1"></div>
+        <button class="btn ghost" onclick="toggleReview()">★ Mark for review</button>
+      </div>
+
+      <div class="qwrap">
+        <div class="qid" id="qid">Question-1</div>
+        <div class="qtext" id="qtext"></div>
+        <div id="opts"></div>
+      </div>
+
+      <div class="bottom">
+        <button class="btn ghost" onclick="prevQ()">‹ Previous</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" onclick="clearResp()">Clear Response</button>
+          <button class="btn primary" onclick="saveNext()">Save & Next ›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right sidebar -->
+    <aside class="card sidebar">
+      <div class="user">
+        <div class="uav">H</div>
+        <div>
+          <div class="uname">Harsh</div>
+          <div style="color:#6b7280;font-size:12px">Section</div>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statrow"><span class="sdot sgreen"></span> <b id="sAns">0</b> Answered</div>
+        <div class="statrow"><span class="sdot sred"></span> <b id="sNot">0</b> Not Answered</div>
+        <div class="statrow"><span class="sdot spurple"></span> <b id="sRev">0</b> Marked for Review</div>
+        <div class="statrow"><span class="sdot sgrey"></span> <b id="sNov">0</b> Not Visited</div>
+      </div>
+
+      <div class="palet">
+        <div style="font-weight:700;margin-bottom:8px">Non Pharma</div>
+        <div id="pal" class="palgrid"></div>
+      </div>
+
+      <div class="subwrap">
+        <button class="submit" onclick="finish()">Submit Test</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="result">
+    <div class="rbox">
+      <div class="score" id="score">0</div>
+      <div class="subtle" id="outof">OUT OF 0</div>
+      <div style="height:1px;background:#e5e7eb;margin:14px 0"></div>
+      <div id="summary" style="text-align:center"></div>
+    </div>
+    <div id="solutions" class="rbox" style="margin-top:16px"></div>
+  </div>
+
+<script>
+const QUESTIONS = [{"id": "6576b57983304a585d9e6c9e", "text": "In a certain code language, N is coded as 30 and COT is coded as 78. How will PET be coded as in that language?", "options": ["84", "70", "100", "40"], "correct_index": 0, "solution": "84"}, {"id": "6576b57983304a225b9e6d2a", "text": "Select the most appropriate synonym of the given word.\nASSERTION", "options": ["Discussion", "Rejection", "Declaration", "Continuation"], "correct_index": 2, "solution": "Declaration"}, {"id": "6576b57983304aa9aa9e6d52", "text": "Select the wrongly spelt word.\nAns 1.  2.  3. 4.", "options": ["Popularly", "Beggarly", "Sincearly", "Jocularly"], "correct_index": 2, "solution": "Sincearly"}, {"id": "6576b57983304a2a969e6d02", "text": "On which day is Constitution Day celebrated every year in India?", "options": ["26 November", "15 October", "30 November", "2 October"], "correct_index": 0, "solution": "26 November"}, {"id": "6576b57983304a10a89e6cbc", "text": "Select the correct mirror image of the given figure.", "options": ["", "", "", ""], "correct_index": 0, "solution": ""}, {"id": "6576b57983304ab92b9e6d43", "text": "Select the most appropriate option to substitute the underlined segment in the given sentence. If there is no need to substitute it, select ‘No improvement’\n. Lenovo has launched ThinkPad XI Fold, the world’s first foldable laptop which is claimed to be so durable as its other devices.", "options": ["to be most durable as", "No improvement", "to be very durable as", "to be as durable as"], "correct_index": 3, "solution": "to be as durable as"}, {"id": "6576b57983304a34939e6d4d", "text": "Select the most appropriate ANTONYM of the given word.\nDEMOLISH", "options": ["Cherish", "Abolish", "Construct", "Obstruct"], "correct_index": 2, "solution": "Construct"}, {"id": "6576b57983304a90a49e6ccb", "text": "In the given figure, BC is a chord and CD is a tangent through the point C. If ∠AOC = 118°, then find the ∠ACD.", "options": ["59°", "65°", "52°", "56°"], "correct_index": 0, "solution": "59°"}, {"id": "6576b57983304a5aac9e6d2f", "text": "Select the wrongly spelt word", "options": ["Awfully", "Unduly", "Unruly", "Faithfuly"], "correct_index": 3, "solution": "Faithfuly"}, {"id": "6576b57983304a6bb89e6c99", "text": "Four letter-clusters have been given out of which three are alike in some manner, while one is different. Choose the odd one.", "options": ["LNP", "DFH", "TVW", "HFG"], "correct_index": 2, "solution": "TVW"}, {"id": "6576b57983304a3ad29e6d07", "text": "In which year were the ‘Kalbelia’ folk songs and dances of Rajasthan included in UNESCO’s representative list of Intangible Cultural Heritage?", "options": ["2010", "2017", "2012", "2015"], "correct_index": 0, "solution": "2010"}, {"id": "6576b57983304a803a9e6d39", "text": "Select the most appropriate meaning of the given idiom.\nUp in arms", "options": ["Angry about something", "Give up fighting and surrender", "Divide into armed groups", "Throw up arms in joy"], "correct_index": 0, "solution": "Angry about something"}, {"id": "6576b57983304a51f79e6cd5", "text": "The least value of 8cosec²A +25sin²A is:", "options": ["10√2", "40√2", "20√2", "30√2"], "correct_index": 0, "solution": "10√2"}, {"id": "6576b57983304a66ca9e6d16", "text": "Which of the following is INCORRECTLY paired?", "options": ["Demography – Population geography", "Anthropology – Cultural geography", "Hydrology – Oceanography", "Pedology – Phyto geography"], "correct_index": 3, "solution": "Pedology – Phyto geography"}, {"id": "6576b57983304a8a389e6d3e", "text": "Select the most appropriate synonym of the given word.\nGUILE", "options": ["Intuition", "Surfeit", "Sincerity", "Deceit"], "correct_index": 3, "solution": "Deceit"}, {"id": "6576b57983304a61019e6cf3", "text": "Rs.6,300 is divided between X, Y, Z, such that X: Y= 7:5 and Y: Z = 4:3. Find the share of Y.", "options": ["2000", "1800", "2400", "2200"], "correct_index": 0, "solution": "2000"}, {"id": "6576b57983304acc089e6cfd", "text": "In a computer, which unit is responsible for processing data and is also called the electronic brain of the computer?", "options": ["Hard disk", "Central Processing Unit (CPU)", "RAM", "Keyboard"], "correct_index": 1, "solution": "Central Processing Unit (CPU)"}, {"id": "6576b57983304a66299e6d0c", "text": "Which article of the Constitution of India mentions that the Lok Sabha must have a Speaker and a Deputy Speaker?", "options": ["Article 93", "Article 58", "Article 85", "Article 100"], "correct_index": 0, "solution": "Article 93"}, {"id": "6576b57983304a70669e6d34", "text": "Select the correct passive form of the given sentence.\nThe police beat a number of protestors last night.", "options": ["A number of protestors were beaten by the police the night before.", "A number of protestors has been beaten by the police the night before", "A number of protestors were being beaten by the police last night", "A number of protestors had been beaten by the police last night"], "correct_index": 0, "solution": "A number of protestors were beaten by the police the night before."}, {"id": "6576b57983304a53619e6cad", "text": "John used to buy petrol at the rate of Rs.80 per litre till last month. Now he buys it at the rate of Rs.85 per litre. By what percentage did the petrol price increase as compared to last month?", "options": ["6.25%", "5.5%", "8.35%", "10%"], "correct_index": 0, "solution": "6.25%"}, {"id": "6576b57983304a42969e6d57", "text": "Select the most appropriate meaning of the given idiom.\nStir up a hornet’s nest\nAns 1.  2. 3.  4.", "options": ["Provoke trouble", "Lead a revolt", "Call for dialogue", "Destroy a nest"], "correct_index": 0, "solution": "Provoke trouble"}, {"id": "6576b57983304a97989e6cb7", "text": "How many triangles are there in the following figure?", "options": ["20", "18", "21", "22"], "correct_index": 0, "solution": "20"}, {"id": "6576b57983304a72509e6ce9", "text": "The diagonal of rectangle is 15 cm and length is 12 cm. Find the area of the rectangle.", "options": ["114 cm²", "108 cm²", "116 cm²", "112 cm²"], "correct_index": 0, "solution": "114 cm²"}, {"id": "6576b57983304a55219e6cf8", "text": "How many times did Pankaj Advani win the ‘IBSF World Billiards Championship?", "options": ["26", "21", "24", "20"], "correct_index": 0, "solution": "26"}, {"id": "6576b57983304a52c79e6cc1", "text": "Select the option that is related to the third letter-cluster in the same way as the second letter-cluster is related to the first letter-cluster\nGOAT: DQYW:: TRES: ?", "options": ["QTCV", "HOMO", "PSBU", "GRWM"], "correct_index": 0, "solution": "QTCV"}, {"id": "6576b57983304ab4689e6ce4", "text": "In ▲XYZ, L and M are the middle points of the sides XY and XZ, respectively. R is a point on the segment LM, such that LR : RM 1:2. If LR = 3 cm, then YZ is equal to:", "options": ["19cm", "17cm", "18cm", "16cm"], "correct_index": 2, "solution": "18cm"}, {"id": "6576b57983304a7a869e6ca3", "text": "The sequence of folding a paper and the manner in which the folded paper has been cut is shown in the following figures. How would this paper look when unfolded?", "options": ["", "", "", ""], "correct_index": 0, "solution": ""}, {"id": "6576b57983304a21169e6cee", "text": "", "options": ["8", "6", "10", "12"], "correct_index": 0, "solution": "8"}, {"id": "6576b57983304a1c2f9e6cda", "text": "Richa travels from A to B at the speed of 15 km/h, from B to C at 20 km/h, and from C to D at 30 km/h  If AB = BC= CD, then find the Richa's average speed.", "options": ["17 Km/h", "19 Km/h", "20 Km/h", "18 Km/h"], "correct_index": 2, "solution": "20Km/h"}, {"id": "6576b57983304aa9399e6d25", "text": "Which forest is also referred to as ‘Monsoon Forests’?", "options": ["Montane Forests", "Tropical Evergreen Forests", "Tropical Deciduous Forests", "Mangrove Forests"], "correct_index": 2, "solution": "Tropical Deciduous Forests"}, {"id": "6576b57983304aa9d19e6c94", "text": "Arrange the given words in a logical and meaningful sequence.\n1. Flat\n2. Street\n3. Room\n4. Apartment\n5. Town", "options": ["3,4,1,2,5", "3,1,4,2,5", "5,2,1,3,4", "1,2,4,3,5"], "correct_index": 1, "solution": "Ans = 3,1,4,2,5"}, {"id": "6576b57983304a4d529e6cb2", "text": "Select the option in which the numbers are related in the same way as are the numbers in the given set. (3, 68, 5)", "options": ["(2,10,1)", "(2,72,10)", "(5,57,8)", "(4,64,5)"], "correct_index": 0, "solution": "(2,10,1)"}, {"id": "6576b57983304a1d3d9e6ca8", "text": "Read the given statements and conclusions carefully. Assuming that the information given in the statements is true, even if it appears to be at variance with commonly known facts, decide which of the given conclusions logically follow(s)\nfrom the statements.\nStatements:\n1. All beans are meat.\n2. All breads are meat.\nConclusions:\nI. Some beans are breads.\nII. Some breads are beans.", "options": ["Neither conclusion I nor II follows", "Either conclusion I or II follows", "Both conclusion I or II follows", "Only conclusion I follows"], "correct_index": 0, "solution": "Neither conclusion I nor II follows"}, {"id": "6576b57983304af3fc9e6cc6", "text": "Ram sold a motorcycle for Rs.70000 at 25% profit. For what price should he sell a motorcycle to gain 30% profit?", "options": ["72800", "72600", "72700", "72900"], "correct_index": 0, "solution": "72800"}, {"id": "6576b57983304a3ab09e6cd0", "text": "The average age of 25 men is 28 years. 5 new men of an average age of 25 years joined them. Find the average age of all the men together.", "options": ["26.5 yrs", "28.5 yrs", "29.5 yrs", "27.5 yrs"], "correct_index": 3, "solution": "27.5 yrs"}, {"id": "6576b57983304a17109e6d20", "text": "Who founded the Indian Statistical Institute (ISI) in Calcutta?", "options": ["JM Sengupta", "Prasanta Chandra Mahalanobis", "RN Mookerjee", "Subhendu Sekhar Bose"], "correct_index": 1, "solution": "Prasanta Chandra Mahalanobis"}, {"id": "6576b57983304a66a89e6d48", "text": "Select the most appropriate word to fill in the blank in the given sentence.\nIf the video clip of the murder had not been shared on social media, the world would likely have remained ______ of the tragedy.", "options": ["recognised", "unconfirmed", "unaware", "renowned"], "correct_index": 2, "solution": "unaware"}, {"id": "6576b57983304a4a139e6cdf", "text": "M is the circumcentre of ▲ABC with circumradius 15 cm. Let BC= 24 cm and ML is perpendicular to BC. Then the length of ML is:", "options": ["9cm", "10cm", "12cm", "8cm"], "correct_index": 0, "solution": "9cm"}, {"id": "6576b57983304a234d9e6d11", "text": "‘Saga Dawa’ is one of the biggest Buddhist festivals. In which one of the following states is it celebrated?", "options": ["Odisha", "Kerala", "Sikkim", "Jharkhand"], "correct_index": 2, "solution": "Sikkim"}, {"id": "6576b57983304a2b5c9e6d1b", "text": "Who introduced the 'Doctrine of Lapse'?", "options": ["Lord Lytton", "Lord Dalhousie", "Lord Wellesley", "Lord Canning"], "correct_index": 1, "solution": "Lord Dalhousie"}, {"id": "6578ad96fe1515c0d854ae87", "text": "Urethral suppositories are also called as", "options": ["Pessaries", "Both", "Bougies", "None"], "correct_index": 2, "solution": "Bougies"}, {"id": "6578ad220a25463bf0128fe6", "text": "﻿Which\nof the following vitamins is a precursor to coenzyme NAD+?", "options": ["Vitamin\nB3", "Vitamin\nD", "Vitamin\nA", "Vitamin\nC"], "correct_index": 0, "solution": "Vitamin\nB3"}, {"id": "6578ad96fe15157c7054aee6", "text": "Kaolin is used in pharmaceutical primarily as\na:", "options": ["Filler", "Adsorbent", "Lubricant", "A and B both"], "correct_index": 3, "solution": "A and B both"}, {"id": "6578ad96fe1515964154ae91", "text": "Which of the following is used to adjust the\nisotonicity?", "options": ["Dextrose", "NaCl", "Boric Acid", "All of these"], "correct_index": 3, "solution": "All of these"}, {"id": "6578ad96fe151509d354aeeb", "text": "Which section of the prescription provides the\nnames and quantities of medicaments to be supplied?", "options": ["Superscription", "Inscription", "Signa", "Subscription"], "correct_index": 1, "solution": "Inscription"}, {"id": "6578ad220a2546216f128fe1", "text": "﻿Furosemide\nis a commonly used diuretic. What class of diuretic does it belong\nto?", "options": ["Loop\ndiuretic", "Thiazide\ndiuretic", "Potassium-sparing\ndiuretic", "Osmotic diuretic"], "correct_index": 0, "solution": "Loop\ndiuretic"}, {"id": "6578ad96fe1515ea5254af04", "text": "Which type of toxicology is concerned with\ngathering toxicological information from animal experimentation?", "options": ["Occupational Toxicology", "Descriptive toxicology", "Clinical Toxicology", "Regulatory Toxicology"], "correct_index": 1, "solution": "Descriptive toxicology"}, {"id": "6578ad220a254646b9128fdc", "text": "﻿Which\nof the following drugs does NOT act the central nervous system", "options": ["Morphine", "Phenobarbital", "Diazepam", "Ibuprofen"], "correct_index": 3, "solution": "Ibuprofen"}, {"id": "6578ad96fe151561c454ae82", "text": "To identify the emulsion type, which of the\nfollowing tests are conducted?", "options": ["Dilution test", "Conductivity test", "Dye test", "All"], "correct_index": 3, "solution": "All"}, {"id": "6578ad220a254628e3128fd2", "text": "﻿A\ncohort study is characterized by:", "options": ["Comparison\nof exposed and non-exposed individuals", "Investigation of\ndisease outbreaks", "Random\nassignment of exposure", "Looking back in\ntime to compare expose & non exposed individuals"], "correct_index": 0, "solution": "Comparison\nof exposed and non-exposed individuals"}, {"id": "6578ad96fe1515979f54aec3", "text": "Inflammation of a vein, often in a leg is:", "options": ["Phlebitis", "Thrombectomy", "Occlusion", "Vein puncture"], "correct_index": 0, "solution": "Phlebitis"}, {"id": "6578ad96fe1515054254aed7", "text": "Distorted liver as a result of chronic\ninflammation due to hepatitis is called", "options": ["cirrhosis", "Bulimia", "Colitic", "Dysphoria"], "correct_index": 0, "solution": "Cirrhosis"}, {"id": "6578ad96fe15158d1354ae8c", "text": "pH of HUMAN tear is", "options": ["7.4", "7.6", "8", "4.6"], "correct_index": 0, "solution": "7.4"}, {"id": "6578ad96fe1515f19b54aee1", "text": "The total Fertility Rate (TFR) is defined as:", "options": ["The number of children born per 1,000\npopulation in a given year", "The average number of children born to a woman\nduring her lifetime", "The number of live births per 1,000 women of\nchildbearing age in a given year", "The number of live births per 1,000 women aged\n15-49 in a given year"], "correct_index": 1, "solution": "The average number of children born to a woman\nduring her lifetime"}, {"id": "6578ad96fe15155ce454aef5", "text": "Vitamin K plays a crucial role in:", "options": ["Bone formation", "Energy formation", "Blood Clotting", "Vision"], "correct_index": 2, "solution": "Blood Clotting"}, {"id": "6578ad96fe15152bec54aedc", "text": "Enlarged and inflamed superior rectal vein is\ncalled", "options": ["Haemorrhoids", "Halitosis", "Colostomy", "Achalasia"], "correct_index": 0, "solution": "Haemorrhoids"}, {"id": "6578ad96fe1515594a54aed2", "text": "If bile contains either insufficient bile salts\nor lecithin or excessive cholesterol, the cholesterol may\ncrystallize to form:", "options": ["Hyperlipoma", "Gall stone", "Lymphoma", "Gastroenteritis"], "correct_index": 1, "solution": "Gall stone"}, {"id": "6578ad96fe15152db954aea5", "text": "Which of the following statement are true\nregarding polio vaccines?", "options": ["Salk and Sabin are polio vaccines", "Salk is an activated polio vaccines", "Sabin is live attenuated polio vaccines", "All of these"], "correct_index": 3, "solution": "All of these"}, {"id": "6578ad96fe1515412154af09", "text": "Which of the following is NOT a benzodiazepine\nused for its sedative-hypnotic properties?", "options": ["Temazepam", "Alprazolam", "Zaleplon", "Lorazepam"], "correct_index": 2, "solution": "Zaleplon"}, {"id": "6578ad96fe1515513354ae78", "text": "Shape of vaginal suppositories is", "options": ["Oviform shape", "Pencil shape", "Torpedo shape", "None"], "correct_index": 0, "solution": "Oviform shape"}, {"id": "6578ad220a2546abcc128feb", "text": "﻿The\nuse of castor oil as a laxative should be avoided in which of the\nfollowing conditions?", "options": ["Pregnancy", "Haemorrhoids", "Irritable bowel\nsyndrome", "Chronic\nconstipation"], "correct_index": 0, "solution": "Pregnancy"}, {"id": "6578ad96fe15158f9d54aef0", "text": "Which of the following is/are the Principles of\nDrug Dispensing?", "options": ["Dispense medications when it is in the best\ninterest of the client", "Dispense medications can be dispensed to both\nclients who are under your care or not", "All of the above", "None of the above"], "correct_index": 0, "solution": "Dispense medications when it is in the best\ninterest of the client"}, {"id": "6578ad96fe1515b7c654aeb4", "text": "Novel drug delivery system provides", "options": ["Information of drug", "Therapeutic amount of drug to appropriate site\nin the body", "Information of active constituent of drug", "Information about delivery of the product"], "correct_index": 1, "solution": "Therapeutic amount of drug to appropriate site\nin the body"}, {"id": "6578ad96fe151505be54aeaa", "text": "Quarantine raw material term used for", "options": ["Starting materials", "Solvents", "Reagents", "All of these"], "correct_index": 3, "solution": "All of these"}, {"id": "6578ad220a25467887128fbe", "text": "﻿Which\namong these is an antithyroid drug ?", "options": ["Lopanoic\nAcid", "Methyprylon", "Thyroxine", "Methimazole"], "correct_index": 3, "solution": "Methimazole\nSolution\n- Methimazole and propylthiouracil are\nused to treat conditions in which the thyroid gland produces too\nmuch thyroid hormone. These medicines work by making it harder for\nthe body to use iodine to make thyroid hormone"}, {"id": "6578ad96fe1515d15f54aeaf", "text": "Which of the following statements is term for\nbatch number?", "options": ["Unique combination of number, letters and\nsymbols can determination production and distribution history of\nproduct", "Indicate unique production", "Indicate APL number", "Indicate quantity"], "correct_index": 0, "solution": "Unique combination of number, letters and\nsymbols can determination production and distribution history of\nproduct"}, {"id": "6578ad96fe1515496354aea0", "text": "Successful immunization can be impaired by", "options": ["Maternal antibody", "Cytokines", "Adjuvant", "Cloning the vaccines"], "correct_index": 0, "solution": "Maternal antibody"}, {"id": "6578ad220a25465fa9128fd7", "text": "﻿The\npreclinical stage in the natural history of disease is\ncharacterized by:", "options": ["The\nonset of complication", "The presence of\nthe disease, but no noticeable symptoms", "Obvious signs &\nsymptoms of the disease", "Recovery from\nthe disease"], "correct_index": 1, "solution": "The presence of\nthe disease, but no noticeable symptoms"}, {"id": "6578ad220a254692a6128fc8", "text": "﻿Which\nof the following is/are characteristic of positive mixture?\nFormed\nfrom material such as gases or miscible liquids.\nNo\ninput of energy is needed if the the time of mixing is unlimited.\nIt\nincludes emulsion, cream, & viscous suspension.", "options": ["2\n& 3 Only", "1 & 2 Only", "All 1,2 & 3", "1 & 3 Only"], "correct_index": 1, "solution": "1 & 2 Only"}, {"id": "6578ad96fe1515aeea54aefa", "text": "Which of the following is/are characteristic(s)\nof Separate State Council which is a Provincial Pharmacy Council?", "options": ["Five members of whom at least three shall be\npossessing in a degree/diploma in pharmacy or be a registered\nPharmacist nominated by the State Government.", "Four members elected from amongst themselves by\nregistered pharmacists of the State.", "One member elected from amongst themselves by\nthe members of each Medical Council of the State", "Both A and C"], "correct_index": 3, "solution": "Both A and C"}, {"id": "6578ad96fe1515405354ae9b", "text": "From the list, the most effective vaccine is\nagainst", "options": ["Staphylococci", "Tetanus", "Tuberculosis", "Adenovirus"], "correct_index": 1, "solution": "Tetanus"}, {"id": "6578ad96fe151515a054aec8", "text": "Condition In which, the pleural cavitiev may\nfill with blood", "options": ["Pneumothorax", "Haematopoietic", "Hemothorax", "Atelectasis"], "correct_index": 2, "solution": "Hemothorax"}, {"id": "6578ad96fe15159c3054aeff", "text": "Which of the following hormones is secreted by\nthe anterior pituitary gland?", "options": ["Aldosterone", "Growth Hormone", "Oxytocin", "Insulin"], "correct_index": 1, "solution": "Growth Hormone"}, {"id": "6578ad220a25466a85128fcd", "text": "﻿The\ncerebellum is primarily responsible for", "options": ["Regulating\nautonomic function", "Coordinating\nvoluntary movements", "Processing\nsensory information", "Controlling\nemotions"], "correct_index": 1, "solution": "Coordinating\nvoluntary movements"}, {"id": "6578ad96fe15156dd354aecd", "text": "A type of respiration disorder characterized by\nchronic and recurrent obstruction of airflow which increases\nairway resistance is?", "options": ["COPD", "COPP", "COPL", "COLP"], "correct_index": 0, "solution": "COPD"}, {"id": "6578ad96fe1515407954ae7d", "text": "Which of the following in not used as an\nemulsifying agent?", "options": ["Surfactant", "Electrolytes", "Hydrophilic colloids", "Finely divided solids"], "correct_index": 1, "solution": "Electrolytes"}, {"id": "6578ad96fe1515568c54ae96", "text": "In aerosol packaging, container must resist\npressure of:", "options": ["600 psig", "40 psig", "140 – 180 psig", "20 psig"], "correct_index": 2, "solution": "140 – 180 psig"}, {"id": "6578ad96fe151500e954aebe", "text": "A fluttering of the heart or an abnormal rate\nor rhythm of the heart is called?", "options": ["Palpitation", "Cardiomyopathy", "Cardiac arrest", "Ejection fraction"], "correct_index": 0, "solution": "Palpitation"}, {"id": "6578ad220a2546ecee128fc3", "text": "﻿Which\nstructure in the kidney is responsible for Filtering blood ?", "options": ["Ureter", "Medulla", "Glomerulus", "Renal pelvis"], "correct_index": 2, "solution": "Glomerulus"}, {"id": "6578ad96fe1515d06a54aeb9", "text": "TDDS stands for :", "options": ["Therapeutic drug delivery system", "Targeted drug delivery system", "Targeted drug discovery system", "Targeted dosage delivery system"], "correct_index": 1, "solution": "Targeted drug delivery system"}];
+const POS = 4; const NEG = -1;
+let TOTAL_SECONDS = 5400;
+
+let current=0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let visited = new Array(QUESTIONS.length).fill(false);
+let review  = new Array(QUESTIONS.length).fill(false);
+let timerInterval;
+
+function renderQ(i){
+  current=i; visited[i]=true;
+  const q = QUESTIONS[i] || {};
+  document.getElementById('qid').textContent = 'Question-'+(i+1);
+  document.getElementById('qtext').textContent = q.text || '';
+  const box = document.getElementById('opts'); box.innerHTML='';
+  (q.options||[]).forEach((op,j)=>{
+    const row = document.createElement('label'); row.className='opt'+(answers[i]===j?' selected':'');
+    const dot = document.createElement('span'); dot.className='rdot';
+    const input = document.createElement('input'); input.type='radio'; input.name='q'+i; input.value=String(j); input.style.display='none';
+    input.checked = (answers[i]===j);
+    input.onchange = ()=>{ answers[i]=j; renderQ(i); refreshStats(); };
+    row.appendChild(dot); row.appendChild(input); row.append(' '+op);
+    row.onclick = (ev)=>{ if(ev.target.tagName!=='INPUT'){ input.checked=true; input.dispatchEvent(new Event('change')); } };
+    box.appendChild(row);
+  });
+  highlightPalette();
+}
+
+function buildPalette(){
+  const pal = document.getElementById('pal'); pal.innerHTML='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const d = document.createElement('div'); d.className='p'; d.textContent = i+1;
+    d.onclick=()=>renderQ(i); pal.appendChild(d);
+  }
+  highlightPalette(); refreshStats();
+}
+function highlightPalette(){
+  const pal = document.getElementById('pal').children;
+  for(let i=0;i<pal.length;i++){
+    let cls='p';
+    if(!visited[i]){}
+    else if(answers[i]===null && !review[i]) cls+=' not-answered';
+    else if(answers[i]!==null && review[i]) cls+=' answered'; // treat as answered for color; review tracked separately
+    else if(answers[i]!==null) cls+=' answered';
+    else if(review[i]) cls+=' not-answered';
+    if(i===current) cls+=' active';
+    pal[i].className = cls;
+  }
+}
+function refreshStats(){
+  const pal = document.getElementById('pal').children;
+  let ans=0, na=0, rev=0, nv=0;
+  for(let i=0;i<pal.length;i++){
+    if(!visited[i]) nv++;
+    if(review[i]) rev++;
+    if(visited[i] && answers[i]===null) na++;
+    if(answers[i]!==null) ans++;
+  }
+  document.getElementById('sAns').textContent=ans;
+  document.getElementById('sNot').textContent=na;
+  document.getElementById('sRev').textContent=rev;
+  document.getElementById('sNov').textContent=nv;
+}
+function prevQ(){ if(current>0) renderQ(current-1); }
+function saveNext(){ if(current<QUESTIONS.length-1) renderQ(current+1); }
+function clearResp(){ answers[current]=null; renderQ(current); refreshStats(); }
+function toggleReview(){ review[current]=!review[current]; highlightPalette(); refreshStats(); }
+
+function finish(){
+  // stop timer
+  if (typeof timerInterval!=='undefined') try{ clearInterval(timerInterval); }catch(e){}
+
+  let score=0,correct=0,wrong=0,attempted=0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    const c=(QUESTIONS[i]||{}).correct_index;
+    const a=answers[i];
+    if(a!==null) attempted++;
+    if(c==null || a==null) continue;
+    if(Number(a)===Number(c)) {score+=POS;correct++;} else {score+=NEG;wrong++;}
+  }
+  const unattempted = QUESTIONS.length - attempted;
+
+  // hide exam, show results
+  document.getElementById('exam').style.display='none';
+  document.getElementById('result').style.display='block';
+
+  document.getElementById('score').textContent = String(score);
+  document.getElementById('outof').textContent = 'OUT OF '+(POS*QUESTIONS.length);
+  document.getElementById('summary').innerHTML =
+    'Correct: <b>'+correct+'</b> &nbsp; | &nbsp; Wrong: <b>'+wrong+
+    '</b> &nbsp; | &nbsp; Unattempted: <b>'+unattempted+'</b>';
+
+  // solutions
+  const sol = document.getElementById('solutions');
+  let h='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const q=QUESTIONS[i]||{}; const c=q.correct_index; const a=answers[i];
+    h += '<div class="sol"><div style="font-weight:700;margin-bottom:6px">Q.'+(i+1)+'</div>';
+    (q.options||[]).forEach((op,j)=>{
+      let cls='';
+      if(c!=null && j===c) cls=' ok';
+      else if(a!=null && j===a && c!=null && a!==c) cls=' bad';
+      h += '<div class="'+cls+'" >'+op+'</div>';
+    });
+    if(q.solution) h += '<div style="margin-top:6px;color:#334155"><small><b>Solution:</b> '+q.solution+'</small></div>';
+    h += '</div>';
+  }
+  sol.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+/* Timer */
+function startTimer(){
+  if (!TOTAL_SECONDS) return;
+  const t = document.getElementById('timer');
+  function tick(){
+    let m = Math.floor(TOTAL_SECONDS/60);
+    let s = TOTAL_SECONDS%60;
+    t.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if (TOTAL_SECONDS<=0) { clearInterval(timerInterval); return; }
+    TOTAL_SECONDS -= 1;
+  }
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.title = 'AIIMS CRE 2023 PHARMACIST MOCK TEST 01';
+  buildPalette();
+  if(QUESTIONS.length) renderQ(0);
+  startTimer();
+});
+</script>
+</body></html>

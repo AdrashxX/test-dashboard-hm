@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pharmacology Mock Test</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--border:#e6eaf3;--text:#0b192d;--muted:#6b7280;--blue:#2b8ef6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--purple:#7c3aed;--shadow:0 2px 12px rgba(2,6,23,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+/* Top bar */
+.top{background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.bcrumb{font-weight:700} .bchip{margin-left:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#374151;border-radius:8px;padding:3px 8px;font-weight:700}
+.tsp{flex:1} .timer{background:#eef2ff;border:1px solid #c7d2fe;padding:4px 10px;border-radius:8px;font-weight:700}
+/* Main layout */
+.main{display:grid;grid-template-columns:1fr 340px;gap:16px;max-width:1200px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+/* Question header row (marking + timer + review) */
+.qhdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:700}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534} .pill.red{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+.qwrap{padding:16px}
+.qid{color:#6b7280;font-size:13px;margin-bottom:6px}
+.qtext{font-weight:700;line-height:1.6;margin:6px 0 14px 0}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;background:#fff;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;background:#fff}
+.opt.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,142,246,.15)}
+/* bottom actions */
+.bottom{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:#fff}
+.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn.ghost{background:#f8fafc}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Sidebar */
+.sidebar{padding:12px}
+.user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.uav{width:44px;height:44px;border-radius:50%;background:#fee2e2;color:#7f1d1d;font-weight:800;display:flex;align-items:center;justify-content:center}
+.uname{font-weight:700}
+.stat{border-top:1px solid var(--border);padding-top:10px;margin-top:6px}
+.statrow{display:flex;align-items:center;gap:8px;margin:8px 0;color:#111827}
+.sdot{width:10px;height:10px;border-radius:50%}
+.sgreen{background:#22c55e}.sred{background:#ef4444}.sgrey{background:#94a3b8}.spurple{background:#7c3aed}
+.palet{margin-top:10px;border-top:1px solid var(--border);padding-top:12px}
+.palgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.p{height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.p.active{outline:2px solid var(--purple)} .p.answered{background:#ecfdf5;border-color:#bbf7d0} .p.not-answered{background:#fee2e2;border-color:#fecaca}
+.subwrap{position:sticky;bottom:0;background:#fff;padding-top:12px}
+.submit{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--blue);background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+/* Result screen */
+.result{display:none;max-width:760px;margin:16px auto}
+.rbox{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.score{font-weight:900;font-size:36px;color:var(--blue);text-align:center}
+.subtle{text-align:center;color:#6b7280}
+.sol{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0}
+.sol .ok{background:#ecfdf5;border:1px solid #bbf7d0;border-radius:8px;padding:8px;margin:6px 0}
+.sol .bad{background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:8px;margin:6px 0}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="bcrumb">Pharmacology Mock Test</div>
+    <span class="bchip">Pharmacology</span>
+    <div class="tsp"></div>
+    <div class="timer">Time Left: <span id="timer">--:--</span></div>
+  </div>
+
+  <div id="exam" class="main">
+    <!-- Center paper -->
+    <section class="card">
+      <div class="qhdr">
+        <div class="pill green">+4</div>
+        <div class="pill red">-1</div>
+        <div style="flex:1"></div>
+        <button class="btn ghost" onclick="toggleReview()">★ Mark for review</button>
+      </div>
+
+      <div class="qwrap">
+        <div class="qid" id="qid">Question-1</div>
+        <div class="qtext" id="qtext"></div>
+        <div id="opts"></div>
+      </div>
+
+      <div class="bottom">
+        <button class="btn ghost" onclick="prevQ()">‹ Previous</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" onclick="clearResp()">Clear Response</button>
+          <button class="btn primary" onclick="saveNext()">Save & Next ›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right sidebar -->
+    <aside class="card sidebar">
+      <div class="user">
+        <div class="uav">H</div>
+        <div>
+          <div class="uname">Harsh</div>
+          <div style="color:#6b7280;font-size:12px">Section</div>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statrow"><span class="sdot sgreen"></span> <b id="sAns">0</b> Answered</div>
+        <div class="statrow"><span class="sdot sred"></span> <b id="sNot">0</b> Not Answered</div>
+        <div class="statrow"><span class="sdot spurple"></span> <b id="sRev">0</b> Marked for Review</div>
+        <div class="statrow"><span class="sdot sgrey"></span> <b id="sNov">0</b> Not Visited</div>
+      </div>
+
+      <div class="palet">
+        <div style="font-weight:700;margin-bottom:8px">Pharmacology</div>
+        <div id="pal" class="palgrid"></div>
+      </div>
+
+      <div class="subwrap">
+        <button class="submit" onclick="finish()">Submit Test</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="result">
+    <div class="rbox">
+      <div class="score" id="score">0</div>
+      <div class="subtle" id="outof">OUT OF 0</div>
+      <div style="height:1px;background:#e5e7eb;margin:14px 0"></div>
+      <div id="summary" style="text-align:center"></div>
+    </div>
+    <div id="solutions" class="rbox" style="margin-top:16px"></div>
+  </div>
+
+<script>
+const QUESTIONS = [{"id": "65378d708f5275570427cb33", "text": "Which of the following is short acting beta-2 agonist used in\nasthma?", "options": ["Terbutaline", "Salmeterol", "Formoterol", "None of above"], "correct_index": 0, "solution": "Terbutaline"}, {"id": "65378d580f13ab2b06a08e4c", "text": ".\nFull form of LDS is----------", "options": ["Lysergic\nacid dimethyl amide", "Lysergic\nacid diester", "Lysergic\nacid diester", "Lysergic\nacid diethylamide"], "correct_index": 3, "solution": "Lysergic\nacid diethylamide"}, {"id": "65378d580f13ab0023a08ee2", "text": "Salbutamol\nis a", "options": ["Mast\ncell stabilizer", "Bronchodilator", "Immunosuppressant", "Antitussive"], "correct_index": 1, "solution": "Bronchodilator"}, {"id": "65378d580f13ab56e0a08e6f", "text": "Chloroquine\nis a", "options": ["4-\namino quinoline", "Acridine", "Biguanide", "Pyrimidine"], "correct_index": 0, "solution": "4-\namino quinoline"}, {"id": "65378d580f13ab3589a08e88", "text": "Which\nof the following in not a benzodiazepine", "options": ["Diazepam", "Nitrazepam", "Zolpidem", "Triazolam"], "correct_index": 2, "solution": "Zolpidem"}, {"id": "65378d580f13ab6c29a08ea6", "text": "Amantadine\nis the drug used as", "options": ["Antibacterial", "Antiviral", "Antifungal", "Antiprotozoal"], "correct_index": 1, "solution": "Antiviral"}, {"id": "65378d580f13ab26dfa08e65", "text": "In\nmammary glands, milk secretion occurs due to-------", "options": ["Estrogen\n& progesterone", "Progesterone", "Prolactin", "Oxytocin"], "correct_index": 2, "solution": "Prolactin"}, {"id": "65378d708f527578d427ca89", "text": "What is the another name of Hansen's Disease?", "options": ["Leprosy", "Gonorrhea", "Tetanus", "Syphilis"], "correct_index": 0, "solution": "Leprosy"}, {"id": "65378d580f13ab4546a08eb0", "text": "Ranitidine\nis a", "options": ["H2\nantagonist", "H1\nantagonist", "Beta\nadrenergic antagonist", "Alpha\nadrenergic antagonist"], "correct_index": 0, "solution": "H2\nantagonist"}, {"id": "65378d580f13ab3274a08eab", "text": "The\nantifungal drug, fluconazole belongs to the family of", "options": ["Pyridine", "Azoles", "Pyrimidines", "Acridines"], "correct_index": 1, "solution": "Azoles"}, {"id": "65378d580f13aba427a08ece", "text": "An\nanalgesic containing para amino phenol group is", "options": ["Paracetamol", "Ibuprofen", "Aspirin", "Indomethacin"], "correct_index": 0, "solution": "Paracetamol"}, {"id": "65378d708f52759f1a27cacf", "text": "Which\none of the following statement is incorrect?", "options": ["Isoniazid may cause peripheral neuropathy", "Chlorpromazine can not induce vomiting", "Colchicine is used for the treatment of gouty arthritis", "Electroconvulsive therapy may be used in the treatment of\ndepression"], "correct_index": 1, "solution": "Chlorpromazine can not induce vomiting"}, {"id": "65378d580f13abc174a08e74", "text": "Myocardium\nis a special muscle tissue found only in the", "options": ["Brain", "Heart", "Stomach", "Lungs"], "correct_index": 1, "solution": "Heart"}, {"id": "65378d708f5275f1b427cac5", "text": "Penicillinase resistant penicillin is_______.", "options": ["Amoxicillin", "Ampicillin", "Penicillin V", "Methicillin"], "correct_index": 3, "solution": "Methicillin"}, {"id": "65378d580f13ab34b8a08e92", "text": "The\nconstituent of cholesterol termed as bed cholesterol is", "options": ["HDL", "LDL", "VLDL", "Triglycerides"], "correct_index": 1, "solution": "LDL"}, {"id": "65378d580f13abc2bba08e97", "text": "Hepatitis\nis a", "options": ["Bacterial\ninfection", "Protozoal\ninfection", "Fungal\ninfection", "Viral\ninfection"], "correct_index": 3, "solution": "Viral\ninfection"}, {"id": "65378d580f13ab5ea3a08ed3", "text": "Acetyl\nsalicylic acid is", "options": ["Sulindac", "Aspirin", "Mefenamic\nacid", "Nalidixic\nacid"], "correct_index": 1, "solution": "Aspirin"}, {"id": "65378d580f13ab2bcba08e10", "text": "What\nis the adult dose of doxycycline in the treatment of cholera?", "options": ["350mg", "250mg", "300mg", "200mg"], "correct_index": 2, "solution": "300mg"}, {"id": "65378d708f527538e027ca70", "text": "An\nexample of rapidly acting anticoagulant", "options": ["Warfarin", "Phenindione", "Propranolol", "Heparin"], "correct_index": 3, "solution": "Heparin"}, {"id": "65378d708f52753bf727caac", "text": "Most\ncommon oestrogen progesterone preparations used as oral\ncontraceptive agents", "options": ["Estrone + progesterone", "Methanol + progesterone", "Diethyl stiboesterol + norgesterol", "Ethinyl oestradiol + norethindrone"], "correct_index": 0, "solution": "Estrone +\nprogesterone"}, {"id": "65378d708f5275839a27caed", "text": "Serum\nLDL has been found to be increased in", "options": ["Obstructive jaundice", "Hepatic jaundice", "Hemolytic jaundice", "Malabsorption syndrome"], "correct_index": 0, "solution": "Obstructive\njaundice"}, {"id": "65378d580f13abe632a08e7e", "text": "Erythroblastosis\nfoetalis arises due to the incompacibility in the", "options": ["Lymph", "Blood", "Synovial\nfluid", "Bile"], "correct_index": 1, "solution": "Blood"}, {"id": "65378d580f13ab199aa08e24", "text": "Licorice,\nIpecacuanha & Vasaka possess similar pharmacological effect to\nthat of", "options": ["Bronchodilator", "Antitussive", "Expectorant", "Laxative"], "correct_index": 2, "solution": "Expectorant"}, {"id": "65378d708f52758d9d27cb51", "text": "A study carried out in Finland has cast doubt on the advisability\nof the routine use of hematinic because men with higher level of\nferritin were more prone to-----------", "options": ["Lung cancer", "Heart attack", "Diabetes", "Gall stone"], "correct_index": 1, "solution": "Heart attack"}, {"id": "65378d708f5275786a27caa2", "text": "Milk\nis deficient in which vitamins?", "options": ["Vitamin C", "Vitamin A", "Vitamin B2", "Vitamin K"], "correct_index": 0, "solution": "Vitamin C"}, {"id": "65378d580f13ab557da08e6a", "text": "Which\nof the following is female sex hormone", "options": ["Silbesterol", "Testosterone", "Estrogen", "Benzysterol"], "correct_index": 2, "solution": "Estrogen"}, {"id": "65378d708f5275ab0827ca98", "text": "The\nfatty acids can be transported into & out of mitochondria\nthrough", "options": ["Active transport", "Facilitated transfer", "Non-facilitated transfer", "None of these"], "correct_index": 1, "solution": "Facilitated\ntransfer"}, {"id": "65378d580f13ab245ca08ea1", "text": "The\nsulphonamide used for burn therapy", "options": ["Sulfadiazine", "Sulfadoxine", "Sulfacetamide", "Sulfapyridine"], "correct_index": 0, "solution": "Sulfadiazine"}, {"id": "65378d580f13ab9863a08ebf", "text": "An\nexample of sulfonyl urea is", "options": ["Metformin", "Tolbutamide", "Rosinglizone", "Repaglinide"], "correct_index": 1, "solution": "Tolbutamide"}, {"id": "65378d580f13ab038aa08e29", "text": "Thromboxane\nA2 is released mainly by--------", "options": ["T\nlymphocytes", "Liver", "Muscles", "Platelets"], "correct_index": 3, "solution": "Platelets"}, {"id": "65378d708f5275791827cb2e", "text": "Tetracycline\nis avoided during pregnancy because", "options": ["It produces severe hair loss in mother", "It may affect the bone growth of fetus", "It causes discoloration of mother", "It may cause abortion"], "correct_index": 1, "solution": "It may affect\nthe bone growth of fetus"}, {"id": "65378d708f5275706e27ca93", "text": "Which\nof the following are the effects of insulin on carbohydrate\nmetabolism?", "options": ["Inhibits glycogenolysis, gluconeogenesis & stimulates\nglycolysis, glycogenesis", "Inhibit glycogenolysis, glycogenesis & stimulates glycolysis,\ngluconeogenesis", "Inhibit gluconeogenesis, glycolysis & stimulates\nglycogenolysis, glycogenesis", "Inhibit glycolysis, glucogenesis & stimulates glycogenolysis,\ngluconeogenesis"], "correct_index": 0, "solution": "Inhibits\nglycogenolysis, gluconeogenesis & stimulates glycolysis,\nglycogenesis"}, {"id": "65378d708f52755ef427ca7f", "text": "Drugs\nwhich increase respirated tract fluid in called", "options": ["Expectorant", "Linctuses", "Laxatives", "All of above"], "correct_index": 0, "solution": "Expectorant"}, {"id": "65378d580f13abfcf9a08e51", "text": "Angiotensinogen\nis produced by-------", "options": ["Kidney", "Liver", "Muscle", "Spleen"], "correct_index": 1, "solution": "Liver"}, {"id": "65378d580f13ab5c2ca08e33", "text": "Site\nof action on of ADH is-----------", "options": ["Proximal\ntubules", "Ascending\nloop of Henle", "Descending\nloop of Henle", "Collecting\nduct"], "correct_index": 3, "solution": "Collecting duct"}, {"id": "65378d708f5275d68e27cb24", "text": "The\norganic acid with antifungal activity is", "options": ["Benzoic acid", "Propionic acid", "Undecanoic acid", "Sorbic acid"], "correct_index": 2, "solution": "Undecanoic acid"}, {"id": "65378d580f13ab7156a08e3d", "text": ".\nIf the iodides are used in solution as expectorants, it is\nprotected by sodium thiosulfate which acts --------", "options": ["Oxidizing\nagent", "Neutralizing\nagent", "Acidifiers", "Antioxidant"], "correct_index": 3, "solution": "Antioxidant"}, {"id": "65378d708f52751b0e27caa7", "text": "The\ntear secretion contains an antibacterial enzyme known as", "options": ["Zymase", "Diastase", "Lysozyme", "Lipase"], "correct_index": 2, "solution": "Lysozyme"}, {"id": "65378d580f13ab43cea08f00", "text": "EEG\nis utilized to diagnose the diseases associated with the", "options": ["Heart", "Kidney", "Abdomen", "Brain"], "correct_index": 3, "solution": "Brain"}, {"id": "65378d580f13ab8a37a08ef1", "text": "Emetine\nis the main ingredient of", "options": ["Ipecac", "Isabgol", "Pyrethrum", "Rhubarb"], "correct_index": 0, "solution": "Ipecac"}, {"id": "65378d708f527515a327ca6b", "text": "Which\nof the following anti-diabetic drug acts by decreasing the amount\nof glucose produced by the liver?", "options": ["Sulfonylureas", "Meglitinides", "Biguanides", "Alpha-glucosidase\ninhibitors"], "correct_index": 2, "solution": "Biguanides"}, {"id": "65378d580f13ab85d9a08efb", "text": "The\ndisease caused by Entamoeba histolytica", "options": ["Malaria", "Trypanosomiasis", "Filariasis", "Amoebiasis"], "correct_index": 3, "solution": "Amoebiasis"}, {"id": "65378d708f527511eb27cb47", "text": "Which\nof the following isomer is more potent as a muscarinic agonis", "options": ["Trans isomer", "Cis isomer", "R isomer", "S isomer"], "correct_index": 0, "solution": "Trans isomer"}, {"id": "65378d708f52757eef27ca84", "text": "Which\none of the following series represents the correct path of blood\ncirculation?", "options": ["Left atrium, left ventricle, lungs, right atrium, right ventricle,\nbody", "Right atrium, right ventricle, lungs, left atrium, left ventricle,\nbody", "Left atrium, left ventricle, right atrium, right ventricle, lungs,\nbody", "Right atrium, lungs, right ventricle, left atrium, body, left\nventricle"], "correct_index": 1, "solution": "Right atrium,\nright ventricle, lungs, left atrium, left ventricle, body"}, {"id": "65378d708f52750daf27cab6", "text": "A\ncardio selective blocker with vasodilating properties is", "options": ["Pindolol", "Atenolol", "Bisoprolol", "Nebivolol"], "correct_index": 3, "solution": "Nebivolol"}, {"id": "65378d708f52756ed027caf2", "text": "Vitamin\nB12\ndeficiency leads to", "options": ["Megaloblastic anemia", "Aplastic anemia", "Hypochromic microcytic anemia", "Normochromic normocytic anemia"], "correct_index": 0, "solution": "Megaloblastic\nanemia"}, {"id": "65378d580f13ab5bc0a08e42", "text": "The\nVDRL is used for diagnosis of----------", "options": ["Hepatitis", "Syphilis", "Typhoid", "Cholera"], "correct_index": 1, "solution": "Syphilis"}, {"id": "65378d708f52758f5627cad4", "text": "Aspirin\nadministered with heparin", "options": ["Increase bleeding tendency", "Decrease bleeding tendency", "Increase excretion of aspirin", "Increase excretion of heparin"], "correct_index": 0, "solution": "Increase\nbleeding tendency"}, {"id": "65378d580f13abfe14a08e8d", "text": "The\ndiagnostic agent used for the functioning of thyroid gland", "options": ["Fe-59", "I-131", "Co-60", "P-32"], "correct_index": 1, "solution": "I-131"}, {"id": "65378d580f13ab0d1aa08e9c", "text": "A\nleukotriene receptor antagonist used in allergic cough is", "options": ["Rofecoxib", "Theophylline", "Losartan", "Montelukast"], "correct_index": 3, "solution": "Montelukast"}, {"id": "65378d708f5275326027cb1a", "text": "A\nperson taking nitroglycerine consumes alcohol. The drug interacts\nwith alcohol & effect seen is as", "options": ["Severe hypotension & collapse", "Drowsiness", "Anticoagulant effect", "Hypertension"], "correct_index": 0, "solution": "Severe\nhypotension & collapse"}, {"id": "65378d708f5275f76327cac0", "text": "An\nexample of potassium sparing diuretics", "options": ["Mannitol", "Acetazolamide", "Triamterene", "Chlorthalidone"], "correct_index": 2, "solution": "Triamterene"}, {"id": "65378d708f5275c5c227cb42", "text": "Nonsteroidal\nanti-androgen useful as anticancer agents is", "options": ["Tamoxifen", "Flutamide", "Etoposide", "Aminoglutethimide"], "correct_index": 1, "solution": "Flutamide"}, {"id": "65378d708f5275483927cade", "text": "A\ndiuretic that can lead to alkalinization of urine is", "options": ["Acetazolamide", "Bendrofluazide", "Furosemide", "Amiloride"], "correct_index": 0, "solution": "Acetazolamide"}, {"id": "65378d580f13ab3447a08ef6", "text": "widal test is used for the diagnosis of", "options": ["Typhoid", "AIDS", "Jaundice", "Meningitis"], "correct_index": 0, "solution": "Typhoid"}, {"id": "65378d708f5275587b27cb3d", "text": "Which\nof the following is not bactericidal in its action?", "options": ["Penicillin", "Tetracycline", "Cephalosporins", "Isoniazid"], "correct_index": 1, "solution": "Tetracycline"}, {"id": "65378d708f52758e4c27cb10", "text": "Which\nof the following is not a beta lactam antibiotic?", "options": ["Cefaclor", "Ampicillin", "Imipenem", "Vancomycin"], "correct_index": 3, "solution": "Vancomycin"}, {"id": "65378d708f5275768727cad9", "text": "Which\nof the following provides a greater surface area for gas exchange?", "options": ["Trachea", "Bronchus", "Alveoli", "Terminal bronchus"], "correct_index": 2, "solution": "Alveoli"}, {"id": "65378d708f5275632827ca8e", "text": "Which of the following can be used as an antidote for atropine", "options": ["Propantheline", "Oxyphenonium", "Hyocine butyl bromide", "Physostigmine"], "correct_index": 3, "solution": "Physostigmine"}, {"id": "65378d708f52755aeb27cb01", "text": "One\nof the drug excreted primarily by renal tubular secretion is", "options": ["Gentamycin", "Kanamycin", "Tetracycline", "Carbenicillin"], "correct_index": 3, "solution": "Carbenicillin"}, {"id": "65378d580f13ab5186a08e0b", "text": "What\ntype of fever appears in malaria patients", "options": ["Intermittent\nfever", "Relapsing", "Continuous\nfever", "Remittent\nfever"], "correct_index": 0, "solution": "Intermittent\nfever"}, {"id": "65378d708f527523a027caca", "text": "________\nis an anticancer drug useful in treatment of arthritis.", "options": ["Azathioprine", "Methotrexate", "Penicillamine", "6-meracaptopurine"], "correct_index": 1, "solution": "Methotrexate"}, {"id": "65378d580f13ab07b0a08e38", "text": "Anti\nmuscarinic agent preferred in the management of motion sickness\nis---------", "options": ["Atropine\nmethonitrate", "Scopolamine", "Homatropine\nmethyl bromide", "Ipratropium\nbromide"], "correct_index": 1, "solution": "Scopolamine"}, {"id": "65378d708f5275f7cb27cab1", "text": "Progesterone injection BP is a sterile solution", "options": ["Water", "Ethyl oleate", "Propylene glycol", "Glycerol"], "correct_index": 1, "solution": "Ethyl oleate"}, {"id": "65378d708f527532c127cb4c", "text": "In\nCNS the main excitatory neurotransmitter is", "options": ["GABA", "Glutamate", "Glycine", "Dopamine"], "correct_index": 1, "solution": "Glutamate"}, {"id": "65378d708f52756a8f27cb38", "text": "An angiotensin receptor blocker useful in treating hypertension is", "options": ["Telmisartan", "Nifedipine", "Atenolol", "Amlodipine"], "correct_index": 0, "solution": "Telmisartan"}, {"id": "65378d708f5275487d27ca61", "text": "When\nurinary pH becomes 8.0 significant increase in excretion of one of\nthe drugs take place?", "options": ["Mepyramine", "Aspirin", "Morphine", "Mecamylamine"], "correct_index": 1, "solution": "Aspirin"}, {"id": "65378d580f13ab1801a08eec", "text": "Ciprofloxacin\nis a", "options": ["Quinoline\ndrug", "Quinolone\ndrug", "Iso-quinoline\ndrug", "Quinuclidine\ndrug"], "correct_index": 1, "solution": "Quinolone\ndrug"}, {"id": "65378d708f52755bb527cae3", "text": "_______\nis the ability of the infections agents to cause disease.", "options": ["Immunity", "Susceptibility", "Virulence", "Attenuation"], "correct_index": 2, "solution": "Virulence"}, {"id": "65378d708f5275247c27cb0b", "text": "Lipids\nare stored in the body mainly in the form of", "options": ["Bile acid", "Triglycerides", "Glycerin", "Linolenic acid"], "correct_index": 1, "solution": "Triglycerides"}, {"id": "65378d580f13abefc4a08edd", "text": "Which\namong the following is a tricyclic antidepressant drug", "options": ["Amitriptyline", "Trazodone", "Phenelzine", "Fluoxetine"], "correct_index": 0, "solution": "Amitriptyline"}, {"id": "65378d708f52751afd27ca75", "text": "Drug\nof choice for status Epilepticus is", "options": ["Lamotrigine", "Diazepam", "Topiramate", "All\nof the above"], "correct_index": 1, "solution": "Diazepam"}, {"id": "65378d708f52752cff27cb15", "text": "Omeprazole\nis used in treatment of peptic ulcer since it", "options": ["Increase the secretion of mucus", "Is H2 receptor antagonist", "Is H1 receptor antagonist", "Is proton pump inhibitor"], "correct_index": 3, "solution": "Is proton pump\ninhibitor"}, {"id": "65378d580f13ab22b2a08e2e", "text": "The\nmost common childhood malignancy is known as----", "options": ["Acute\nmyeloblastic leukemia (AML)", "Acute\nlymphoblastic leukemia (ALL)", "Chronic\nmyeloblastic leukemia (CML)", "Chronic\nlymphocytic leukemia (CLL)"], "correct_index": 1, "solution": "Acute\nlymphoblastic leukemia (ALL)"}, {"id": "65378d580f13ab6cb3a08ed8", "text": "Chlorpromazine\nis an antipsychotic drug possessing", "options": ["Butyrophenone", "Thioxanthin", "Phenothiazine", "Acridine"], "correct_index": 2, "solution": "Phenothiazine"}, {"id": "65378d580f13abb0e3a08ee7", "text": "Which\namong the following is an anti-dandruff drug", "options": ["Zinc\nsulphate", "Selenium\nsulfide", "Zinc\ncarbonate", "Sodium\nfluoride"], "correct_index": 1, "solution": "Selenium\nsulfide"}, {"id": "65378d708f5275cee727cabb", "text": "Anti\nhypertension drug which inhibits the rennin angiotensin system is", "options": ["Reserpine", "Captopril", "Methyl dopa", "Propranolol"], "correct_index": 1, "solution": "Captopril"}, {"id": "65378d580f13abb233a08e83", "text": "A\nparenteral anticoagulant drug is", "options": ["Penicillin", "Phenindione", "Warfarin", "Heparin"], "correct_index": 3, "solution": "Heparin"}, {"id": "65378d708f5275879127ca5c", "text": "Which\ndiuretic competes with Aldosterone?", "options": ["Mannitol", "Furasemide", "Ethacrynic\nacid", "Spironolactone"], "correct_index": 3, "solution": "Spironolactone"}, {"id": "65378d708f52751ec727cae8", "text": "The\ninitial distribution of a drug into tissue is determine chiefly by", "options": ["Rate of blood flow to the tissue", "Plasma protein binding of the drug", "Affinity for the tissue", "Stomach emptying time"], "correct_index": 0, "solution": "Rate of blood\nflow to the tissue"}, {"id": "65378d580f13ab2e83a08e15", "text": "Which\nof the following is a plasminogen activator?", "options": ["Donepezil", "Tranexamic\nacid", "Streptokinase", "Aminocaproic\nacid"], "correct_index": 2, "solution": "Streptokinase"}, {"id": "65378d580f13ab133ca08e5b", "text": "Vomiting\nshould not be induced in the treatment of----", "options": ["Warfarin\npoisoning", "Poisoning\nwith corrosives", "Atropine\npoisoning", "Paracetamol\npoisoning"], "correct_index": 1, "solution": "Poisoning\nwith corrosives"}, {"id": "65378d708f5275b44627caf7", "text": "Hypocalcemia\ncan occurs in a following expect", "options": ["Rickets", "Osteomalacia", "Hyperparathyroidism", "Intestinal malabsorption"], "correct_index": 2, "solution": "Hyperparathyroidism"}, {"id": "65378d580f13abf64ea08e60", "text": "The\nmain adverse effects of salbutamol are", "options": ["Bradycardia\n& heart block", "Nausea\n& vomiting", "Diarrhea\n& hypotension", "Palpitation\n& muscle tremors"], "correct_index": 3, "solution": "Palpitation\n& muscle tremors"}, {"id": "65378d580f13abc747a08eba", "text": "One\namong the following is a communicable disease", "options": ["Cancer", "Diabetes", "Hypertension", "Filariasis"], "correct_index": 3, "solution": "Filariasis"}, {"id": "65378d580f13ab3942a08eb5", "text": "Tuberculosis\nis diagnosed by", "options": ["Vidal\ntest", "Elisa\ntest", "Mantoux\ntest", "Alerts\nmethod"], "correct_index": 2, "solution": "Mantoux\ntest"}, {"id": "65378d580f13ab22eba08e1a", "text": "Hydroxocobalamin\nis used as an antidote for", "options": ["Cyanide", "Botulism", "Mercury", "Opiates"], "correct_index": 0, "solution": "Cyanide"}, {"id": "65378d580f13ab4518a08e79", "text": "Mannitol\nis", "options": ["Loop\ndiuretic", "Osmotic\ndiuretic", "Potassium\nsparing diuretic", "Carbonic\nanhydrase diuretic"], "correct_index": 1, "solution": "Osmotic\ndiuretic"}, {"id": "65378d708f5275056c27cb29", "text": "Acyclovir\nis used as", "options": ["Antimalarial", "Antifungal", "Antiviral", "Antiprotozoal"], "correct_index": 2, "solution": "Antiviral"}, {"id": "65378d580f13abb560a08ec9", "text": "Phenobarbitone\nis a", "options": ["Sedative", "Antipsychotic", "Psychotic", "Anxiolytic"], "correct_index": 0, "solution": "Sedative"}, {"id": "65378d580f13abc81da08e47", "text": "COC\npills are not recommended for women feeding the babies\nbecause---------", "options": ["It\nmay affect the babies growth", "It\nmay affect the quality & quantity of secreted milk", "It\nmay cause stroke in babies", "It\nmay cause blood clots in veins"], "correct_index": 1, "solution": "It\nmay affect the quality & quantity of secreted milk"}, {"id": "65378d580f13abeb9da08e1f", "text": "Which\namong these are used as respiratory stimulants?", "options": ["Carbon\ndioxide with 5 to 7 % of oxygen", "Nitrogen\nwith 5 to 7 % of oxygen", "Helium\nwith 5 to 7 % of oxygen", "Carbon\nmonoxide with 5 to 7 % of oxygen"], "correct_index": 0, "solution": "Carbon\ndioxide with 5 to 7 % of oxygen"}, {"id": "65378d708f527536ed27cb1f", "text": "Which\none of the following is not a pharmacological effect of morphine?", "options": ["Constriction of pupil", "CNS depression", "Diarrhea", "Respiratory depression"], "correct_index": 2, "solution": "Diarrhea"}, {"id": "65378d708f5275f1ce27ca9d", "text": "Antidote\nfor Paracetamol overdosing", "options": ["Atropine", "N-Acetyl cysteine", "Glutathione", "Theophylline"], "correct_index": 1, "solution": "N-Acetyl\ncysteine"}, {"id": "65378d708f527563ab27cb06", "text": "Which of the following combination is suggested in treatment of\nleprosy?", "options": ["Dapsone + Ampicillin + Clofazimine", "Dapsone + Clofazimine + Rifampin", "Dapsone + Erythromycin + Rifampin", "Dapsone + Tetracycline + Streptomycin"], "correct_index": 1, "solution": "Dapsone +\nClofazimine + Rifampin"}, {"id": "65378d580f13ab0000a08ec4", "text": "The\nmedicinal agents used for the increase in urine output is known as", "options": ["Urinary\nantiseptics", "Diuretics", "Stimulants", "Antiseptics"], "correct_index": 1, "solution": "Diuretics"}, {"id": "65378d580f13ab4123a08e56", "text": "What is the term for the inappropriate use of antimicrobial drugs, which can contribute to microbial resistance ?", "options": ["Antibiotic stewardship", "Antimicribial resistant", "Antibiotic misuse", "Antibiosis"], "correct_index": 2, "solution": "Antibiotic misuse"}, {"id": "65378d708f5275681127ca66", "text": "________\ncauses systemic arteriolar dilatation and thereby reduces after\nload", "options": ["Amyl\nnitrates", "Chlorthiazide", "Nifedipine", "Atenolol"], "correct_index": 0, "solution": "Amyl\nnitrates"}, {"id": "65378d708f52750e3427ca7a", "text": "Beta\nblocker with membrane stabilizing activity", "options": ["Propranolol", "Timolol", "Atenolol", "Esmolol"], "correct_index": 0, "solution": "Propranolol"}, {"id": "65378d708f5275633c27cafc", "text": "Which\nof the following is not a side effect of sulphonamides", "options": ["Stevens-Johnson syndrome", "Toxic epidermal syndrome", "Ototoxicity", "Agranulocytosis"], "correct_index": 2, "solution": "Ototoxicity"}];
+const POS = 4; const NEG = -1;
+let TOTAL_SECONDS = 5400;
+
+let current=0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let visited = new Array(QUESTIONS.length).fill(false);
+let review  = new Array(QUESTIONS.length).fill(false);
+let timerInterval;
+
+function renderQ(i){
+  current=i; visited[i]=true;
+  const q = QUESTIONS[i] || {};
+  document.getElementById('qid').textContent = 'Question-'+(i+1);
+  document.getElementById('qtext').textContent = q.text || '';
+  const box = document.getElementById('opts'); box.innerHTML='';
+  (q.options||[]).forEach((op,j)=>{
+    const row = document.createElement('label'); row.className='opt'+(answers[i]===j?' selected':'');
+    const dot = document.createElement('span'); dot.className='rdot';
+    const input = document.createElement('input'); input.type='radio'; input.name='q'+i; input.value=String(j); input.style.display='none';
+    input.checked = (answers[i]===j);
+    input.onchange = ()=>{ answers[i]=j; renderQ(i); refreshStats(); };
+    row.appendChild(dot); row.appendChild(input); row.append(' '+op);
+    row.onclick = (ev)=>{ if(ev.target.tagName!=='INPUT'){ input.checked=true; input.dispatchEvent(new Event('change')); } };
+    box.appendChild(row);
+  });
+  highlightPalette();
+}
+
+function buildPalette(){
+  const pal = document.getElementById('pal'); pal.innerHTML='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const d = document.createElement('div'); d.className='p'; d.textContent = i+1;
+    d.onclick=()=>renderQ(i); pal.appendChild(d);
+  }
+  highlightPalette(); refreshStats();
+}
+function highlightPalette(){
+  const pal = document.getElementById('pal').children;
+  for(let i=0;i<pal.length;i++){
+    let cls='p';
+    if(!visited[i]){}
+    else if(answers[i]===null && !review[i]) cls+=' not-answered';
+    else if(answers[i]!==null && review[i]) cls+=' answered'; // treat as answered for color; review tracked separately
+    else if(answers[i]!==null) cls+=' answered';
+    else if(review[i]) cls+=' not-answered';
+    if(i===current) cls+=' active';
+    pal[i].className = cls;
+  }
+}
+function refreshStats(){
+  const pal = document.getElementById('pal').children;
+  let ans=0, na=0, rev=0, nv=0;
+  for(let i=0;i<pal.length;i++){
+    if(!visited[i]) nv++;
+    if(review[i]) rev++;
+    if(visited[i] && answers[i]===null) na++;
+    if(answers[i]!==null) ans++;
+  }
+  document.getElementById('sAns').textContent=ans;
+  document.getElementById('sNot').textContent=na;
+  document.getElementById('sRev').textContent=rev;
+  document.getElementById('sNov').textContent=nv;
+}
+function prevQ(){ if(current>0) renderQ(current-1); }
+function saveNext(){ if(current<QUESTIONS.length-1) renderQ(current+1); }
+function clearResp(){ answers[current]=null; renderQ(current); refreshStats(); }
+function toggleReview(){ review[current]=!review[current]; highlightPalette(); refreshStats(); }
+
+function finish(){
+  // stop timer
+  if (typeof timerInterval!=='undefined') try{ clearInterval(timerInterval); }catch(e){}
+
+  let score=0,correct=0,wrong=0,attempted=0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    const c=(QUESTIONS[i]||{}).correct_index;
+    const a=answers[i];
+    if(a!==null) attempted++;
+    if(c==null || a==null) continue;
+    if(Number(a)===Number(c)) {score+=POS;correct++;} else {score+=NEG;wrong++;}
+  }
+  const unattempted = QUESTIONS.length - attempted;
+
+  // hide exam, show results
+  document.getElementById('exam').style.display='none';
+  document.getElementById('result').style.display='block';
+
+  document.getElementById('score').textContent = String(score);
+  document.getElementById('outof').textContent = 'OUT OF '+(POS*QUESTIONS.length);
+  document.getElementById('summary').innerHTML =
+    'Correct: <b>'+correct+'</b> &nbsp; | &nbsp; Wrong: <b>'+wrong+
+    '</b> &nbsp; | &nbsp; Unattempted: <b>'+unattempted+'</b>';
+
+  // solutions
+  const sol = document.getElementById('solutions');
+  let h='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const q=QUESTIONS[i]||{}; const c=q.correct_index; const a=answers[i];
+    h += '<div class="sol"><div style="font-weight:700;margin-bottom:6px">Q.'+(i+1)+'</div>';
+    (q.options||[]).forEach((op,j)=>{
+      let cls='';
+      if(c!=null && j===c) cls=' ok';
+      else if(a!=null && j===a && c!=null && a!==c) cls=' bad';
+      h += '<div class="'+cls+'" >'+op+'</div>';
+    });
+    if(q.solution) h += '<div style="margin-top:6px;color:#334155"><small><b>Solution:</b> '+q.solution+'</small></div>';
+    h += '</div>';
+  }
+  sol.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+/* Timer */
+function startTimer(){
+  if (!TOTAL_SECONDS) return;
+  const t = document.getElementById('timer');
+  function tick(){
+    let m = Math.floor(TOTAL_SECONDS/60);
+    let s = TOTAL_SECONDS%60;
+    t.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if (TOTAL_SECONDS<=0) { clearInterval(timerInterval); return; }
+    TOTAL_SECONDS -= 1;
+  }
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.title = 'Pharmacology Mock Test';
+  buildPalette();
+  if(QUESTIONS.length) renderQ(0);
+  startTimer();
+});
+</script>
+</body></html>
