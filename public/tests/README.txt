@@ -1,1 +1,0 @@
-Put all your HTML test files here. Rename to clean names without spaces/brackets.
