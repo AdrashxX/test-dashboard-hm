@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export async function getStaticProps() {
   const testsDir = path.join(process.cwd(), "public/tests");
@@ -39,6 +39,15 @@ export async function getStaticProps() {
 export default function Home({ subjects }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState({});
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
 
   const toggle = (subject) => {
     setOpen((prev) => ({ ...prev, [subject]: !prev[subject] }));
@@ -60,20 +69,31 @@ export default function Home({ subjects }) {
   );
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Pharmacy Test Dashboard</h1>
+    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-gray-100">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Pharmacy Test Dashboard</h1>
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="px-3 py-1 rounded-lg border dark:border-gray-600"
+        >
+          {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+        </button>
+      </div>
 
       <input
         type="text"
         placeholder="Search tests..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="mb-6 p-2 border rounded w-full md:w-1/2"
+        className="mb-6 p-2 border rounded w-full md:w-1/2 dark:bg-gray-800 dark:border-gray-600"
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Object.keys(filteredSubjects).map((subject) => (
-          <div key={subject} className="bg-white rounded-2xl shadow-lg p-4">
+          <div
+            key={subject}
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4"
+          >
             <button
               onClick={() => toggle(subject)}
               className="flex justify-between items-center w-full"
@@ -90,7 +110,7 @@ export default function Home({ subjects }) {
                   <li key={test.file}>
                     <a
                       href={`/viewer?file=${encodeURIComponent(test.file)}`}
-                      className="text-blue-600 hover:underline"
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
                       dangerouslySetInnerHTML={{
                         __html: highlight(test.testName),
                       }}
