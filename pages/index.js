@@ -1,109 +1,86 @@
-import fs from "fs";
-import path from "path";
-import { useState } from "react";
+import { useRouter } from "next/router";
 
-export async function getStaticProps() {
-  const testsDir = path.join(process.cwd(), "public/tests");
-  const files = fs.readdirSync(testsDir);
+export default function Home() {
+  const router = useRouter();
 
-  const subjects = {};
-  files.forEach((file) => {
-    if (file.endsWith(".html")) {
-      let subject = "Others";
-      let testName = file.replace(".html", "");
-
-      if (file.includes("__")) {
-        const parts = file.split("__");
-        subject = parts[0];
-        testName = parts[1].replace(".html", "");
-      } else if (file.includes("_Test_")) {
-        const parts = file.split("_Test_");
-        subject = parts[0] + "_Test";
-        testName = parts[1].replace(".html", "");
-      } else {
-        const idx = file.lastIndexOf("_");
-        if (idx !== -1) {
-          subject = file.substring(0, idx);
-          testName = file.substring(idx + 1).replace(".html", "");
-        }
-      }
-
-      if (!subjects[subject]) subjects[subject] = [];
-      subjects[subject].push({ file, testName });
-    }
-  });
-
-  return { props: { subjects } };
-}
-
-export default function Home({ subjects }) {
-  const [query, setQuery] = useState("");
-  const [open, setOpen] = useState({});
-
-  const toggle = (subject) => {
-    setOpen((prev) => ({ ...prev, [subject]: !prev[subject] }));
+  const tests = {
+    "AIIMS CRE 2025 Pharmacist Mock Test Series": [
+      "AIIMS_CRE_2023_PHARM(1).html",
+      "AIIMS_CRE_2023_PHARM.html",
+      "AIIMS_CRE_MOCK_TEST.html",
+    ],
+    "Pharmacy All Subject Wise Mock Test": [
+      "Biochemistry_Mock_Test.html",
+      "Community_Pharmacy_and_Mana.html",
+      "DSPM_Drug_Store_and_Busines.html",
+      "HAP_Human_Anatomy_and_Physi.html",
+      "HCFP_Health_Education_and_C.html",
+      "Hospital_and_Clinical_Pharm.html",
+      "Pharmaceutics.html",
+      "Pharmaceutical_Jurispruden.html",
+      "Pharmacognosy.html",
+      "Pharmacology_mock_test_1.html",
+    ],
+    "Railway Pharmacist Mock Test": [
+      "FREE_RRB_Pharmacist_FINAL_Mock_Test.html",
+      "RRB_Pharmacist_Mock_Test_2.html",
+      "RRB_Pharmacist_Mock_Test_3.html",
+      "RRB_Pharmacist_Mock_test_1.html",
+    ],
   };
-
-  const highlight = (text) => {
-    if (!query) return text;
-    const regex = new RegExp(`(${query})`, "gi");
-    return text.replace(regex, "<mark>$1</mark>");
-  };
-
-  const filteredSubjects = Object.fromEntries(
-    Object.entries(subjects).map(([subject, tests]) => [
-      subject,
-      tests.filter((t) =>
-        (t.testName + subject).toLowerCase().includes(query.toLowerCase())
-      ),
-    ]).filter(([_, tests]) => tests.length > 0)
-  );
 
   return (
-    <div className="p-6 min-h-screen bg-gray-100 text-gray-900">
-      <h1 className="text-3xl font-bold mb-6">Mock Test Dashboard</h1>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left side - Test list */}
+      <div className="flex-1 p-6">
+        <h1 className="text-2xl font-bold mb-6">Mock Test Dashboard</h1>
 
-      <input
-        type="text"
-        placeholder="Search tests..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="mb-6 p-2 border rounded w-full md:w-1/2"
-      />
+        {Object.entries(tests).map(([category, files]) => (
+          <div key={category} className="mb-6">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">{category}</h2>
+            <div className="bg-white shadow rounded-lg divide-y">
+              {files.map((file, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => router.push(`/viewer?file=${file}`)}
+                  className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-100 transition"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Icon (A for test, PDF icon if .pdf) */}
+                    {file.endsWith(".pdf") ? (
+                      <span className="text-red-500">📕</span>
+                    ) : (
+                      <span className="text-blue-500">🅰️</span>
+                    )}
+                    <span className="text-gray-800">
+                      {file.replace(".html", "").replace(".pdf", "")}
+                    </span>
+                  </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Object.keys(filteredSubjects).map((subject) => (
-          <div
-            key={subject}
-            className="bg-white rounded-2xl shadow-lg p-4"
-          >
-            <button
-              onClick={() => toggle(subject)}
-              className="flex justify-between items-center w-full text-left"
-            >
-              <h2 className="text-lg font-semibold">
-                {subject} ({filteredSubjects[subject].length} tests)
-              </h2>
-              <span>{open[subject] ? "▲" : "▼"}</span>
-            </button>
-
-            {open[subject] && (
-              <ul className="list-disc ml-6 mt-2 space-y-1">
-                {filteredSubjects[subject].map((test) => (
-                  <li key={test.file}>
-                    <a
-                      href={`/viewer?file=${encodeURIComponent(test.file)}`}
-                      className="text-blue-600 hover:underline"
-                      dangerouslySetInnerHTML={{
-                        __html: highlight(test.testName),
-                      }}
-                    />
-                  </li>
-                ))}
-              </ul>
-            )}
+                  {/* Lock/unlock icon (abhi sab free hai, 🔓 dikhayenge) */}
+                  <span className="text-gray-400">🔓</span>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
+      </div>
+
+      {/* Right side - Promo / Info */}
+      <div className="w-80 bg-white shadow-md p-4 hidden md:block">
+        <h3 className="font-bold text-lg mb-2">Study Material</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          For All Pharmacist Exams
+        </p>
+        <div className="bg-blue-50 p-3 rounded-lg text-center">
+          <p className="text-xl font-bold text-blue-600 mb-2">
+            ₹ 581 <span className="line-through text-gray-400">681</span>{" "}
+            <span className="text-green-600">15% OFF</span>
+          </p>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+            Get this course
+          </button>
+        </div>
       </div>
     </div>
   );
