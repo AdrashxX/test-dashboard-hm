@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RRB Pharmacist Mock Test 2</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--border:#e6eaf3;--text:#0b192d;--muted:#6b7280;--blue:#2b8ef6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--purple:#7c3aed;--shadow:0 2px 12px rgba(2,6,23,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+/* Top bar */
+.top{background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.bcrumb{font-weight:700} .bchip{margin-left:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#374151;border-radius:8px;padding:3px 8px;font-weight:700}
+.tsp{flex:1} .timer{background:#eef2ff;border:1px solid #c7d2fe;padding:4px 10px;border-radius:8px;font-weight:700}
+/* Main layout */
+.main{display:grid;grid-template-columns:1fr 340px;gap:16px;max-width:1200px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+/* Question header row (marking + timer + review) */
+.qhdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:700}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534} .pill.red{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+.qwrap{padding:16px}
+.qid{color:#6b7280;font-size:13px;margin-bottom:6px}
+.qtext{font-weight:700;line-height:1.6;margin:6px 0 14px 0}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;background:#fff;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;background:#fff}
+.opt.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,142,246,.15)}
+/* bottom actions */
+.bottom{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:#fff}
+.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn.ghost{background:#f8fafc}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Sidebar */
+.sidebar{padding:12px}
+.user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.uav{width:44px;height:44px;border-radius:50%;background:#fee2e2;color:#7f1d1d;font-weight:800;display:flex;align-items:center;justify-content:center}
+.uname{font-weight:700}
+.stat{border-top:1px solid var(--border);padding-top:10px;margin-top:6px}
+.statrow{display:flex;align-items:center;gap:8px;margin:8px 0;color:#111827}
+.sdot{width:10px;height:10px;border-radius:50%}
+.sgreen{background:#22c55e}.sred{background:#ef4444}.sgrey{background:#94a3b8}.spurple{background:#7c3aed}
+.palet{margin-top:10px;border-top:1px solid var(--border);padding-top:12px}
+.palgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.p{height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.p.active{outline:2px solid var(--purple)} .p.answered{background:#ecfdf5;border-color:#bbf7d0} .p.not-answered{background:#fee2e2;border-color:#fecaca}
+.subwrap{position:sticky;bottom:0;background:#fff;padding-top:12px}
+.submit{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--blue);background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+/* Result screen */
+.result{display:none;max-width:760px;margin:16px auto}
+.rbox{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.score{font-weight:900;font-size:36px;color:var(--blue);text-align:center}
+.subtle{text-align:center;color:#6b7280}
+.sol{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0}
+.sol .ok{background:#ecfdf5;border:1px solid #bbf7d0;border-radius:8px;padding:8px;margin:6px 0}
+.sol .bad{background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:8px;margin:6px 0}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="bcrumb">RRB Pharmacist Mock Test 2</div>
+    <span class="bchip">non Pharma</span>
+    <div class="tsp"></div>
+    <div class="timer">Time Left: <span id="timer">--:--</span></div>
+  </div>
+
+  <div id="exam" class="main">
+    <!-- Center paper -->
+    <section class="card">
+      <div class="qhdr">
+        <div class="pill green">+4</div>
+        <div class="pill red">-1</div>
+        <div style="flex:1"></div>
+        <button class="btn ghost" onclick="toggleReview()">★ Mark for review</button>
+      </div>
+
+      <div class="qwrap">
+        <div class="qid" id="qid">Question-1</div>
+        <div class="qtext" id="qtext"></div>
+        <div id="opts"></div>
+      </div>
+
+      <div class="bottom">
+        <button class="btn ghost" onclick="prevQ()">‹ Previous</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" onclick="clearResp()">Clear Response</button>
+          <button class="btn primary" onclick="saveNext()">Save & Next ›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right sidebar -->
+    <aside class="card sidebar">
+      <div class="user">
+        <div class="uav">H</div>
+        <div>
+          <div class="uname">Harsh</div>
+          <div style="color:#6b7280;font-size:12px">Section</div>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statrow"><span class="sdot sgreen"></span> <b id="sAns">0</b> Answered</div>
+        <div class="statrow"><span class="sdot sred"></span> <b id="sNot">0</b> Not Answered</div>
+        <div class="statrow"><span class="sdot spurple"></span> <b id="sRev">0</b> Marked for Review</div>
+        <div class="statrow"><span class="sdot sgrey"></span> <b id="sNov">0</b> Not Visited</div>
+      </div>
+
+      <div class="palet">
+        <div style="font-weight:700;margin-bottom:8px">non Pharma</div>
+        <div id="pal" class="palgrid"></div>
+      </div>
+
+      <div class="subwrap">
+        <button class="submit" onclick="finish()">Submit Test</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="result">
+    <div class="rbox">
+      <div class="score" id="score">0</div>
+      <div class="subtle" id="outof">OUT OF 0</div>
+      <div style="height:1px;background:#e5e7eb;margin:14px 0"></div>
+      <div id="summary" style="text-align:center"></div>
+    </div>
+    <div id="solutions" class="rbox" style="margin-top:16px"></div>
+  </div>
+
+<script>
+const QUESTIONS = [{"id": "66b8ad78fc2a2b2b78eb0c68", "text": "who is the first indian woman officer to recieve the air force gallantry award?", "options": ["padma lakshmi", "Deepika mishra", "Surekha devi", "surabhi jakhmola"], "correct_index": 1, "solution": "Deepika mishra"}, {"id": "66b8ad78fc2a2bf95deb0c47", "text": "If Shashank is the son of Pragya's husband Kushal, who is the son of Malini, then how is Malini's husband related to Shashank?", "options": ["Grand father", "Uncle", "Father", "Mother"], "correct_index": 0, "solution": "Grand father"}, {"id": "66b8ad78fc2a2b3de0eb0c56", "text": "Which country has won the title of thomas and uber cup 2024?", "options": ["shri lanka", "span", "china", "russia"], "correct_index": 2, "solution": "China"}, {"id": "66b8ad78fc2a2b06e8eb0c4a", "text": "Select the option which has the same relationship with the third letter-cluster as the second letter-cluster has with the first letter-cluster.", "options": ["JQOTFN", "JSQSFN", "KSQOFN", "JSRSFL"], "correct_index": 1, "solution": ""}, {"id": "66b8ad78fc2a2b0ce1eb0c67", "text": "which of the following pair is not correctly matched?", "options": ["world water day-22 March", "world biodiversity day - 22 may", "world earth day 22 april", "world red cross day - 21 may"], "correct_index": 3, "solution": "world red cross day - 21 may"}, {"id": "66b8ad78fc2a2b9143eb0c49", "text": "who is India in the world happiness report 2024 published in march 2024?", "options": ["126th", "120th", "130th", "214th"], "correct_index": 0, "solution": "126th"}, {"id": "66b8ad78fc2a2b1173eb0c4e", "text": "Which country has got the first position in the world press freedom index 2024?", "options": ["Norway", "Denmark", "Sweeden", "Netherlands"], "correct_index": 0, "solution": "Norway"}, {"id": "66b8ad78fc2a2bc164eb0c62", "text": "In how many years will the simple interest on a sum of money be equal to the principle at rate of 12.5% p.a.?", "options": ["7 years", "8 years", "6 years", "5 years"], "correct_index": 1, "solution": "8 years"}, {"id": "66b8ad78fc2a2b2e89eb0c45", "text": "Length and breadth of rectangular field are in the ratio 5: 2. If the perimeter of the field is 238 m. Find the length of the field.", "options": ["84m", "85m", "82m", "83m"], "correct_index": 1, "solution": "85m"}, {"id": "66b8ad78fc2a2b7b1beb0c69", "text": "in which country operation kaveri was started by the government of india to bring back the stranded indians?", "options": ["Sudan", "Turkiye", "Afghanistan", "Ukrain"], "correct_index": 0, "solution": "Sudan"}, {"id": "66b8ad78fc2a2b7682eb0c60", "text": "Six persons A, B, C, D, E and F are sitting around a circular table facing the centre. E is fourth to the left of D, who is sitting immediate left of B. A is immediate left of C. F is not sitting next to E. Who sits second to the right of F?", "options": ["B", "D", "A", "E"], "correct_index": 0, "solution": "B"}, {"id": "66b8ad78fc2a2bb5f1eb0c65", "text": "Three different positions of the same dice are shown. Select the number which will be on the panel opposite to the panel containing number 1.", "options": ["6", "5", "2", "4"], "correct_index": 0, "solution": "3"}, {"id": "66b8ad78fc2a2b08b4eb0c55", "text": "Ajrakh textile art has recently been given to which state by G.I. tags found", "options": ["U.P.", "M.P.", "Gurajat", "Rajasthan"], "correct_index": 2, "solution": "Gujarat"}, {"id": "66b8ad78fc2a2bc4e2eb0c57", "text": "Select the figure from the given options which can come in place of the question mark (?) in the following series.", "options": ["", "", "", ""], "correct_index": 0, "solution": ""}, {"id": "66b8ad78fc2a2b5963eb0c58", "text": "The average of the runs of a cricket player in 20 matches is 35. If the average of the first 12 matches is 45, find the average of the last 8 matches.", "options": ["20", "16", "22", "18"], "correct_index": 0, "solution": "20"}, {"id": "66b8ad78fc2a2b045aeb0c50", "text": "Select the number from the given alternatives which can come in place of the question mark (?) in the following series.", "options": ["214", "186", "227", "144"], "correct_index": 0, "solution": "214"}, {"id": "66b8ad78fc2a2b4c6eeb0c4f", "text": "A man divided his journey into three parts of distances of 18 km, 20 km and 27 km. He travelled the distances at the speeds of 6 km/h, 5 km/h and 9 km/h, respectively. What was his average speed during the entire journey?", "options": ["6.5km/h", "4.5km/h", "7.5km/h", "5.5km/h"], "correct_index": 0, "solution": "6.5km/h"}, {"id": "66b8ad78fc2a2b1434eb0c54", "text": "In a certain code language, 'SWEDEN' is written as 'TXDEDO', and 'GERMANY' is written as 'HDSNZOZ'. How will 'PORTUGAL' be written in that code language?", "options": ["QNSUTHZM", "OPSWTHZM", "QNSUVHZK", "QNSUTPBM"], "correct_index": 0, "solution": "QNSUTHZM"}, {"id": "66b8ad78fc2a2bcb2feb0c4b", "text": "", "options": ["3.0", "2.9", "3.1", "2.86"], "correct_index": 0, "solution": "3.0"}, {"id": "66b8ad78fc2a2b72f1eb0c52", "text": "Select the correct option which shows the order of the given words in the order in which they appear in the English dictionary.", "options": ["2, 1, 5, 4, 3", "2, 1, 3, 5, 4,", "5, 1, 2, 3, 4", "1, 2, 5, 4, 3"], "correct_index": 0, "solution": "2, 1, 5, 4, 3"}, {"id": "66b8ad78fc2a2b0784eb0c61", "text": "There are four houses A, B, C and D located in a colony. B is situated 40m north of C. A is situated at a distance of 20 m to the east of D. C is situated at a distance of 30m to the west of D. In which direction is A with respect to C?", "options": ["West", "South", "North", "East"], "correct_index": 3, "solution": "East"}, {"id": "66b8ad78fc2a2b49cbeb0c66", "text": "Who has been appointed by UNICEF India as its national ambassador?", "options": ["Kareena Kapoor Khan", "Salman Khan", "Sudhanshu Mehta", "Lovlina Borgohain"], "correct_index": 0, "solution": "Kareena Kapoor Khan"}, {"id": "66b8ad78fc2a2bdf4ceb0c4d", "text": "In the given figure, O is the centre of the circle. Its two chords AB and CD intersect each other at the point P within the\ncircle. If AB = 15 cm, PB = 9 cm, CP = 3 cm, then find the length of PD.", "options": ["18cm", "20cm", "16cm", "22cm"], "correct_index": 0, "solution": "18cm"}, {"id": "66b8ad78fc2a2bbe8beb0c63", "text": "which of the following became the first state in the country to provide Right to Health", "options": ["Rajasthan", "Maharashtra", "Kerala", "Gujarat"], "correct_index": 0, "solution": "Rajasthan"}, {"id": "66b8ad78fc2a2bf2e0eb0c64", "text": "If a - b = 4 and a³ - b³ = 88, then find the value of a² - b²", "options": ["7√6", "9√6", "6√6", "8√6"], "correct_index": 3, "solution": "8√6"}, {"id": "66b8ad78fc2a2b5478eb0c4c", "text": "Mohan offers to sell his articles at a discount of 20%, but he marks his articles by increasing the price of each by 35%. What percentage would his gain be?", "options": ["9%", "7%", "8%", "10%"], "correct_index": 2, "solution": "8%"}, {"id": "66b8ad78fc2a2b5704eb0c5a", "text": "A + B means - 'A is the father of B'\nA % B means - 'A is the husband of B'\nA # B means - 'A is the daughter of B'\nSo on the basis of U + S % M # T, how is S related to T?", "options": ["Son in law", "Father in law", "Father", "Son"], "correct_index": 0, "solution": "Son in law"}, {"id": "66b8ad78fc2a2b77a8eb0c48", "text": "On selling a bike for 2500 a seller incurs a loss of 20%. What price would have caused him to lose 30%?", "options": ["Rs2186.5", "Rs2187.5", "Rs2188.5", "Rs2155.5"], "correct_index": 1, "solution": "2187.5"}, {"id": "66b8ad78fc2a2b7756eb0c59", "text": "which state's 'Basholi painting' has been given the geographical indication tag?", "options": ["Jammu and Kashmir", "Karnataka", "Chhattisgarh", "Tamil Nadu"], "correct_index": 0, "solution": "Jammu and Kashmir"}, {"id": "66b8ad78fc2a2b1a7deb0c53", "text": "", "options": ["3", "5", "6", "4"], "correct_index": 0, "solution": ""}, {"id": "66b8ad78fc2a2b5039eb0ca7", "text": "The action of Vitamin K in formation of clotting factor is through", "options": ["Post transcription", "Post translation", "Golgi complex", "Endoplasmic reticulum"], "correct_index": 1, "solution": "Post translation"}, {"id": "66b8ad78fc2a2b39d4eb0c97", "text": "Tick the drug, inhibiting viral reverse transcriptase:", "options": ["Zidovudine", "Vidarabine", "Rimantadine", "Gancyclovir"], "correct_index": 0, "solution": "Zidovudine"}, {"id": "66b8ad78fc2a2b966aeb0c89", "text": "Nitroglycerin\nointment in clinical use is", "options": ["1%", "2%", "5%", "10%"], "correct_index": 1, "solution": "2%"}, {"id": "66b8ad78fc2a2b3cdaeb0c96", "text": "Which of the following natural substances is traditionally used as a cardiotonic agent, primarily for the treatment of heart conditions, and contains compounds called cardiac glycosides?", "options": ["Ephedra", "Opium", "Arjuna", "Belladonna"], "correct_index": 2, "solution": "Arjuna"}, {"id": "66b8ad78fc2a2b3acdeb0c98", "text": "Which tablet defect is characterized by the splitting or chipping of the tablet's edges and corners, often resulting from excessive pressure during the compression process?", "options": ["Mottling", "Capping", "Blistering", "Lamination"], "correct_index": 1, "solution": "Capping"}, {"id": "66b8ad78fc2a2b169feb0c77", "text": "The A peptide\nchain of insulin composed of how many amino acid resides ?", "options": ["30", "11", "40", "21"], "correct_index": 3, "solution": "21"}, {"id": "66b8ad78fc2a2b4639eb0c78", "text": "Who is the\nlicensing authority for issuing retail sale license?", "options": ["Central Drugs\nControl Authority", "State Drugs\nControl Authority", "District\nCollector", "Chief Medical\nOfficer of the District"], "correct_index": 1, "solution": "State Drugs\nControl Authority"}, {"id": "66b8ad78fc2a2bdb85eb0c83", "text": "The\noxygen cylinder colour code in India is", "options": ["black\nbody and white shoulder-coloured cylinder", "white\nbody and black shoulder-coloured cylinder", "Grey\nbody and Blue shoulder-coloured cylinder", "None"], "correct_index": 0, "solution": "black\nbody and white shoulder-coloured cylinder"}, {"id": "66b8ad78fc2a2b0694eb0c84", "text": "In context of\nmechanism of size reduction of drugs ball mill works on the\nprinciple ……..", "options": ["Crushing", "Grinding", "Shearing", "Impact and\nAttrition"], "correct_index": 3, "solution": "Impact and\nAttrition"}, {"id": "66b8ad78fc2a2b28deeb0c6f", "text": "Which is FDA\napproved colour for foods & drug", "options": ["Shellac", "Cantharides", "Honey", "Cochineal"], "correct_index": 3, "solution": "Cochineal"}, {"id": "66b8ad78fc2a2b5663eb0c7f", "text": "MMR vaccine is\nan example of which type of vaccines?", "options": ["Killed vaccines", "Toxoid vaccines", "Live virus\nvaccines", "Biosynthetic\nvaccines"], "correct_index": 2, "solution": "Live virus\nvaccines"}, {"id": "66b8b52f7387fee5622dc740", "text": "Which of the\nfollowing groups is responsible for the duration of the local\nanaesthetic action ?", "options": ["Verapamil", "Quinine", "Aspirin", "Ampicillin"], "correct_index": 1, "solution": "Quinine"}, {"id": "66b8ad78fc2a2b04a6eb0c99", "text": "Which of the given option is not an ideal property of Semi-solid Dosage Form?", "options": ["Non-dehydrating", "Rough texture", "Non-hygroscopic", "Non-greasy"], "correct_index": 1, "solution": "Rough texture"}, {"id": "66b8ad78fc2a2bb0f6eb0c7a", "text": "is used as an\nopacifier in hard gelatin capsules.", "options": ["Glycerine", "Polyhydric\nalcohol", "Sorbitol", "Titanium dioxide"], "correct_index": 3, "solution": "Titanium dioxide"}, {"id": "66b8ad78fc2a2b25beeb0c73", "text": "Basic Character\nof saponin glycosides is\nStatement\nI – Cause hemolysis & foaming with water\nStatement\nII - in the treatment of hypercalciuria in\nhumans, and as an antidote against acute lead poisoning", "options": ["I & II Both\nCorrect", "I & II Both\nIncorrect", "Only I Correct", "Only II Correct"], "correct_index": 0, "solution": ""}, {"id": "66b8ad78fc2a2b271beb0c8b", "text": "…are\nwhich are insufflated in nasal cavity", "options": ["Powder", "Snaff", "Pills", "Poultices"], "correct_index": 1, "solution": "Snaff"}, {"id": "66b8ad78fc2a2b393eeb0c9f", "text": "Which of the following size reduction methods is typically used for reducing the size of solid materials by impact and attrition using a series of hammers rotating at high speeds?", "options": ["Fluid Energy Mill", "Disintegrator", "Hammer Mill", "Ball Mill"], "correct_index": 2, "solution": "Hammer Mill"}, {"id": "66b8b52f7387fe34dc2dc768", "text": "Which of the\nfollowing is one of the factors affecting bioavailability?", "options": ["Partition\ncoefficient", "Reduction", "Oxidation", "Enhancement"], "correct_index": 0, "solution": "Partition\ncoefficient"}, {"id": "66b8ad78fc2a2b2fceeb0c8f", "text": "Ergot is\nproduced during", "options": ["Honeydew stage", "Sclerotium stage", "Ascopore stage", "Sphacelia stage"], "correct_index": 1, "solution": "Sclerotium stage"}, {"id": "66b8ad78fc2a2b1ff8eb0c8d", "text": "How many pharmacists are in a 50 bed hospital?", "options": ["1", "3", "5", "10"], "correct_index": 1, "solution": "3"}, {"id": "66b8b52f7387fe39602dc75e", "text": "Absorbent cotton\nconsists of epidermal trichomes from the seeds of cultivated\nspecies of ________.", "options": ["Terminalia\ntomentosa", "Cassia siamea", "Dalbergia\nlatifolia", "Gossypium"], "correct_index": 3, "solution": "Gossypium"}, {"id": "66b8ad78fc2a2b643eeb0c6c", "text": "Under which\nSchedule, the requirements for displaying manufacturing raw\nmaterials and analytical records of drugs deal with?", "options": ["U", "M", "W", "Y"], "correct_index": 0, "solution": "U"}, {"id": "66b8ad78fc2a2b410beb0ca6", "text": "The most active form of Vitamin D is", "options": ["25-Hydroxycholecalciferol", "1, 25-dihydroxycholecalciferol", "25-dihydroxyergocalciferol", "None of these"], "correct_index": 0, "solution": "25-Hydroxycholecalciferol"}, {"id": "66b8ad78fc2a2be05beb0c6e", "text": "In the\ncomposition of PTC the pharmacist works as…", "options": ["Chairperson", "Secretary", "Administrator", "Anesthetist"], "correct_index": 1, "solution": "Secretary"}, {"id": "66b8ad78fc2a2b8ffdeb0c95", "text": "The route of administration of BCG is ?", "options": ["Intra-dermal", "Intravenous", "Intra-muscular", "Oral"], "correct_index": 0, "solution": "Intra-dermal"}, {"id": "66b8ad78fc2a2b9854eb0c74", "text": "Is weak\ndiuretics.", "options": ["Aminophylline", "Mefruside", "Furosemide", "Bumetanide"], "correct_index": 0, "solution": "Aminophylline"}, {"id": "66b8ad78fc2a2b3987eb0c75", "text": "What\nis porcine insulin made of?", "options": ["obtained\nfrom pigs", "obtained\nfrom Chemical reaction", "obtained\nfrom stem cell", "obtained\nfrom plant"], "correct_index": 0, "solution": "obtained\nfrom pigs"}, {"id": "66b8ad78fc2a2b5dc3eb0c6d", "text": "Which chapter of\nthe pharmacy act 1948 is related with state pharmacy councils", "options": ["Chapter III", "Chapter VI", "Chapter V", "Chapter II"], "correct_index": 0, "solution": "Chapter III"}, {"id": "66b8ad78fc2a2be41eeb0c9d", "text": "Which is a selective COX-3 inhibitor?", "options": ["Paracetamol", "Celecoxib", "Nimesulide", "Ibuprofen"], "correct_index": 0, "solution": "Paracetamol"}, {"id": "66b8ad78fc2a2b6908eb0c9c", "text": "Which type of gelatin capsule is more suitable for liquid and oily formulations and is known for its flexibility and ease of swallowing?", "options": ["Enteric-Coated Capsules", "Soft Gelatin Capsule", "Hard Gelatin Capsules", "Vegetarian Capsules"], "correct_index": 1, "solution": "Soft Gelatin Capsule"}, {"id": "66b8ad78fc2a2bb039eb0c9e", "text": "Household remedies are listed in which schedule of Drug and Cosmetic Rules?", "options": ["Schedule M", "Schedule H", "Schedule K", "Schedule KG"], "correct_index": 2, "solution": "Schedule K"}, {"id": "66b8ad78fc2a2b23c6eb0c7d", "text": "Pyrogen testing\nis done on", "options": ["Mice", "Rabbit", "Guainia pig", "None"], "correct_index": 1, "solution": "Rabbit"}, {"id": "66b8b52f7387fe8a142dc763", "text": "Long term use of\nUricosurics leads to ____________.", "options": ["Neurotoxicity", "Hepatotoxicity", "Ototoxicity", "Nephrotoxicity"], "correct_index": 3, "solution": "Nephrotoxicity"}, {"id": "66b8ad78fc2a2b13a1eb0ca3", "text": "Ashwagandha is common name for _________.", "options": ["Holarrhena antidysenterica", "Bacopa monneira", "Withania somnifera", "Casia autifolia"], "correct_index": 2, "solution": "Withania somnifera"}, {"id": "66b8ad78fc2a2b0c4beb0c81", "text": "Low\nconcentrations of heparin selectively interfere with the following\ncoagulation pathway(s)", "options": ["Intrinsic\npathways", "Extrinsic\npathways", "Common pathways", "Both (a) and (c)"], "correct_index": 0, "solution": "Intrinsic\npathways"}, {"id": "66b8ad78fc2a2b0e5deb0ca0", "text": "Milk of magnesia is also called as _______.", "options": ["Mg(OH) 2", "MgCO 3", "MgO 2", "Magnesium trisilicate"], "correct_index": 0, "solution": "Mg(OH) 2"}, {"id": "66b8ad78fc2a2b18e5eb0c91", "text": "Which of the given options is true about the use of Diuretics?\n1.Increase the rate of urine formation by the kidneys.\n2.decrease the amount of sodium and increase the amount of water in urine.", "options": ["Only 1", "Only 2", "Both 1 & 2", "Neither 1 nor 2"], "correct_index": 0, "solution": "Only 1"}, {"id": "66b8ad78fc2a2b89b7eb0c8a", "text": "Twenty months\nafter finishing her chemotherapy, the woman had a relapse of\nbreast cancer. The cancer was now unresponsive to standard doses\nof chemotherapy. The decision was made to treat the patient with\nhigh dosage chemotherapy followed by autologous stem cell\ntransplantation. Which of the following drugs is most likely to be\nused to mobilize the peripheral blood stem cells for the patient’s\nautologous stem cell transplantation?", "options": ["Erythropoietin", "G - CSF", "Interleukin –\n11", "Intrinsic factor"], "correct_index": 3, "solution": "insic factor"}, {"id": "66b8ad78fc2a2b44b6eb0c88", "text": "Modified\nbrontagers test are used to identify which type of anthraquinone\nglycosides", "options": ["S-glycosides", "N-glycosides", "O-glycosides", "C-glycosides"], "correct_index": 3, "solution": "C-glycosides\nBorntrager's test is used for O-glycoside detection, while modified Borntrager's test is used for C-glycoside detection."}, {"id": "66b8ad78fc2a2bf528eb0c93", "text": "Sterilised milk lacks in......", "options": ["Vitamin A", "Vitamin D", "Vitamin C", "Thiamin"], "correct_index": 2, "solution": "Vitamin C"}, {"id": "66b8ad78fc2a2b1e5eeb0c80", "text": "The duration of\naction of insulin-zinc suspension (lente insulin) is", "options": ["2-4 hrs", "8-10 hrs", "20-24 hrs", "30-36 hrs"], "correct_index": 2, "solution": "20-24 hrs"}, {"id": "66b8ad78fc2a2bcdedeb0c72", "text": "Epsom\nsalt is also known as", "options": ["Magnesium\nsulfate", "Calcium\nCarbonate", "NaOH", "Sodium\nbicarbonate"], "correct_index": 0, "solution": "Magnesium\nsulfate"}, {"id": "66b8b52f7387fe62a52dc73b", "text": "Chemical name of\nCalamine is _", "options": ["Calcium sulphate", "Magnesium\nsulphate", "Zinc Carbonate", "Magnesium\nstearate"], "correct_index": 2, "solution": "Zinc Carbonate"}, {"id": "66b8ad78fc2a2b6acbeb0c85", "text": ". …..type\nof glass is not suitable for parenteral preparations", "options": ["Type I\nBorosilicate", "Type II\nBorosilicate", "Type III\nBorosilicate", "N.P.Glass"], "correct_index": 3, "solution": "N.P.Glass"}, {"id": "66b8ad78fc2a2bd5d0eb0c76", "text": "According to IP\none-gram shark liver oil should not contain less then\n…………International units of Vitamin A\nactivity", "options": ["6000", "4000", "5000", "3000"], "correct_index": 0, "solution": "6000"}, {"id": "66b8ad78fc2a2b0c7feb0ca5", "text": "Pellagra is due to the deficiency of", "options": ["Niacine", "Thiamine", "Vit. B12", "Vit. C"], "correct_index": 0, "solution": "Niacine Niacin (vitamin B3) deficiency results in a condition known as pellagra."}, {"id": "66b8ad78fc2a2b593eeb0c79", "text": "HLB value for\nanti-foaming agent is", "options": ["1-3", "16-18", "3-8", "8-16"], "correct_index": 0, "solution": "1-3"}, {"id": "66b8b52f7387fe3ee02dc74a", "text": "Progesterone\ninjection can be sterilized by __", "options": ["Dry Heat", "Moist Heat", "Radiation", "Filtration"], "correct_index": 0, "solution": "Dry Heat"}, {"id": "66b8ad78fc2a2bd6e2eb0c90", "text": "Which Xanthine\nderivative has no function in asthma?", "options": ["Theophylline", "Pentoxyphyllin", "Enprofylin", "None of the\nabove"], "correct_index": 1, "solution": "Pentoxyphyllin"}, {"id": "66b8ad78fc2a2bcbb4eb0c7c", "text": "Eucelle method\nused to extract oil from", "options": ["Citrus fruit", "Clove", "Mustered", "None"], "correct_index": 0, "solution": "Citrus fruit"}, {"id": "66b8ad78fc2a2b71a2eb0c92", "text": "Indicate the drug which increases absorption of iron from intestine:", "options": ["Cyanocobalamin", "Folic acid", "Ascorbic acid", "Erythropoetin"], "correct_index": 2, "solution": "Ascorbic acid"}, {"id": "66b8ad78fc2a2b2408eb0c71", "text": "Antibiotics,\nalkaloids can produce", "options": ["Dysgensia", "Constipation", "Diarrhora", "Ulceration"], "correct_index": 0, "solution": "Dysgensia"}, {"id": "66b8b52f7387fe69952dc74f", "text": "Capping is\nprevented by using which type of punch?", "options": ["Flat", "Circular", "Square", "Rectangular"], "correct_index": 0, "solution": "Flat"}, {"id": "66b8ad78fc2a2b4e2eeb0ca1", "text": "Which test is commonly used to measure the hardness or resistance to crushing of tablets?", "options": ["Uniformity of Weight Test", "Friability Test", "Integration Test", "Dissolution Test"], "correct_index": 1, "solution": "Friability Test"}, {"id": "66b8ad78fc2a2b8634eb0c8c", "text": "In organo\nphosphorous poisoning the antidote use is", "options": ["10%calciumlactat", "Phenobarbitone", "Atropine", "All of these"], "correct_index": 2, "solution": "Atropine"}, {"id": "66b8ad78fc2a2b1f1eeb0c7b", "text": "Chloramphenicol\nis the drug of choice in", "options": ["Staphylococcal\ninfection", "Salmonella\ninfection", "Viral infection", "Amoebic dysentry"], "correct_index": 1, "solution": "Salmonella\ninfection"}, {"id": "66b8b52f7387febca42dc745", "text": "An Ototoxic drug\nis ________", "options": ["Vincristine", "Penicillin", "Streptomycin", "Sulfonamides"], "correct_index": 2, "solution": "Streptomycin"}, {"id": "66b8b52f7387fedf042dc754", "text": "Which one is an\nimpregnated bandage?", "options": ["Crepe bandage", "Plaster of Paris\nbandage", "Cotton crepe\nbandage", "Cambric bandage"], "correct_index": 1, "solution": "Plaster of Paris\nbandage"}, {"id": "66b8ad78fc2a2b5fb1eb0c86", "text": "In which year\ndid the Narcotic Drugs and Psychotropic Substances Act come into\nexistence?", "options": ["1985", "1984", "1983", "2013"], "correct_index": 0, "solution": "1985"}, {"id": "66b8ad78fc2a2b4376eb0c94", "text": "An important finding in Tay-sach’s disease is", "options": ["Renal failure", "Accumulation of gangliosides in brain and spleen", "Cardiac failure", "Anemia"], "correct_index": 1, "solution": "Accumulation of gangliosides in brain and spleen"}, {"id": "66b8ad78fc2a2bf53ceb0c87", "text": "Carr’s\nindex for good flow properties is", "options": ["More then 50%", "Less then 18 %", "Less then 25 %", "Less thrn 75 %"], "correct_index": 1, "solution": "Less then 18 %"}, {"id": "66b8ad78fc2a2b8017eb0ca4", "text": "Latin word for \"Statim\" is .........", "options": ["Slowly", "Immediately", "With Sugar", "Every Hour"], "correct_index": 1, "solution": "Immediately"}, {"id": "66b8ad78fc2a2bc7c3eb0c8e", "text": "Relationship\nbetween arterial blood pressure (BP), cardiac output (CO) and\nperipheral vascular resistance (PVR) can be described as", "options": ["BP = CO*PVR", "BP = CO/PVR", "BP = PVR/CO", "None of them"], "correct_index": 0, "solution": "BP = CO*PVR"}, {"id": "66b8ad78fc2a2b2f95eb0c9b", "text": "Sodium Benzoate is used as .................. & titrated by ..................titration", "options": ["Preservative & non aqueous titration", "Lubricant & Acid base titration", "Diagnostic agents & Precipitation titration", "Antioxidant & Redox titration"], "correct_index": 0, "solution": "Preservative & non aqueous titration"}, {"id": "66b8ad78fc2a2b6a66eb0c82", "text": "Which of the\nfollowing is a steroidal antibiotic", "options": ["Nalidixic acid", "Fusidic acid", "Spectinomycin", "Nitrofurantoin"], "correct_index": 1, "solution": "Fusidic acid"}, {"id": "66b8ad78fc2a2b72ceeb0c70", "text": "The insulin\nreceptor is a", "options": ["Ion channel\nregulating receptor", "Tyrosine protein\nkinase receptor", "G-protein\ncoupled receptor", "None of the\nabove"], "correct_index": 1, "solution": "Tyrosine protein\nkinase receptor"}, {"id": "66b8b52f7387fe09592dc759", "text": "Which helps to\nimprove drug prescribing practices by promoting safe and rational\nuse of drug?", "options": ["Pharmacy", "PTC", "Hospital\nFormulary", "Proper drug\ndispensing"], "correct_index": 1, "solution": "PTC"}, {"id": "66b8ad78fc2a2b12eeeb0c9a", "text": "Enzyme drug used for acute leukemia treatment", "options": ["Dihydrofolate reductase", "Asparaginase", "Aromatase", "DNA gyrase"], "correct_index": 1, "solution": "Asparaginase"}, {"id": "66b8ad78fc2a2bc79beb0c7e", "text": "Iodine dissolves\nin water with the addition of", "options": ["Potassium iodide", "Sodium chloride", "Sulphur", "Calcium\ncarbonate"], "correct_index": 0, "solution": "Potassium iodide"}, {"id": "66b8ad78fc2a2bf2b6eb0ca2", "text": "Which of the following is a viral disease?", "options": ["Filariasis", "Leprosy", "Influenza", "Diphtheria"], "correct_index": 2, "solution": "Influenza"}];
+const POS = 4; const NEG = -1;
+let TOTAL_SECONDS = 5400;
+
+let current=0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let visited = new Array(QUESTIONS.length).fill(false);
+let review  = new Array(QUESTIONS.length).fill(false);
+let timerInterval;
+
+function renderQ(i){
+  current=i; visited[i]=true;
+  const q = QUESTIONS[i] || {};
+  document.getElementById('qid').textContent = 'Question-'+(i+1);
+  document.getElementById('qtext').textContent = q.text || '';
+  const box = document.getElementById('opts'); box.innerHTML='';
+  (q.options||[]).forEach((op,j)=>{
+    const row = document.createElement('label'); row.className='opt'+(answers[i]===j?' selected':'');
+    const dot = document.createElement('span'); dot.className='rdot';
+    const input = document.createElement('input'); input.type='radio'; input.name='q'+i; input.value=String(j); input.style.display='none';
+    input.checked = (answers[i]===j);
+    input.onchange = ()=>{ answers[i]=j; renderQ(i); refreshStats(); };
+    row.appendChild(dot); row.appendChild(input); row.append(' '+op);
+    row.onclick = (ev)=>{ if(ev.target.tagName!=='INPUT'){ input.checked=true; input.dispatchEvent(new Event('change')); } };
+    box.appendChild(row);
+  });
+  highlightPalette();
+}
+
+function buildPalette(){
+  const pal = document.getElementById('pal'); pal.innerHTML='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const d = document.createElement('div'); d.className='p'; d.textContent = i+1;
+    d.onclick=()=>renderQ(i); pal.appendChild(d);
+  }
+  highlightPalette(); refreshStats();
+}
+function highlightPalette(){
+  const pal = document.getElementById('pal').children;
+  for(let i=0;i<pal.length;i++){
+    let cls='p';
+    if(!visited[i]){}
+    else if(answers[i]===null && !review[i]) cls+=' not-answered';
+    else if(answers[i]!==null && review[i]) cls+=' answered'; // treat as answered for color; review tracked separately
+    else if(answers[i]!==null) cls+=' answered';
+    else if(review[i]) cls+=' not-answered';
+    if(i===current) cls+=' active';
+    pal[i].className = cls;
+  }
+}
+function refreshStats(){
+  const pal = document.getElementById('pal').children;
+  let ans=0, na=0, rev=0, nv=0;
+  for(let i=0;i<pal.length;i++){
+    if(!visited[i]) nv++;
+    if(review[i]) rev++;
+    if(visited[i] && answers[i]===null) na++;
+    if(answers[i]!==null) ans++;
+  }
+  document.getElementById('sAns').textContent=ans;
+  document.getElementById('sNot').textContent=na;
+  document.getElementById('sRev').textContent=rev;
+  document.getElementById('sNov').textContent=nv;
+}
+function prevQ(){ if(current>0) renderQ(current-1); }
+function saveNext(){ if(current<QUESTIONS.length-1) renderQ(current+1); }
+function clearResp(){ answers[current]=null; renderQ(current); refreshStats(); }
+function toggleReview(){ review[current]=!review[current]; highlightPalette(); refreshStats(); }
+
+function finish(){
+  // stop timer
+  if (typeof timerInterval!=='undefined') try{ clearInterval(timerInterval); }catch(e){}
+
+  let score=0,correct=0,wrong=0,attempted=0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    const c=(QUESTIONS[i]||{}).correct_index;
+    const a=answers[i];
+    if(a!==null) attempted++;
+    if(c==null || a==null) continue;
+    if(Number(a)===Number(c)) {score+=POS;correct++;} else {score+=NEG;wrong++;}
+  }
+  const unattempted = QUESTIONS.length - attempted;
+
+  // hide exam, show results
+  document.getElementById('exam').style.display='none';
+  document.getElementById('result').style.display='block';
+
+  document.getElementById('score').textContent = String(score);
+  document.getElementById('outof').textContent = 'OUT OF '+(POS*QUESTIONS.length);
+  document.getElementById('summary').innerHTML =
+    'Correct: <b>'+correct+'</b> &nbsp; | &nbsp; Wrong: <b>'+wrong+
+    '</b> &nbsp; | &nbsp; Unattempted: <b>'+unattempted+'</b>';
+
+  // solutions
+  const sol = document.getElementById('solutions');
+  let h='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const q=QUESTIONS[i]||{}; const c=q.correct_index; const a=answers[i];
+    h += '<div class="sol"><div style="font-weight:700;margin-bottom:6px">Q.'+(i+1)+'</div>';
+    (q.options||[]).forEach((op,j)=>{
+      let cls='';
+      if(c!=null && j===c) cls=' ok';
+      else if(a!=null && j===a && c!=null && a!==c) cls=' bad';
+      h += '<div class="'+cls+'" >'+op+'</div>';
+    });
+    if(q.solution) h += '<div style="margin-top:6px;color:#334155"><small><b>Solution:</b> '+q.solution+'</small></div>';
+    h += '</div>';
+  }
+  sol.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+/* Timer */
+function startTimer(){
+  if (!TOTAL_SECONDS) return;
+  const t = document.getElementById('timer');
+  function tick(){
+    let m = Math.floor(TOTAL_SECONDS/60);
+    let s = TOTAL_SECONDS%60;
+    t.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if (TOTAL_SECONDS<=0) { clearInterval(timerInterval); return; }
+    TOTAL_SECONDS -= 1;
+  }
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.title = 'RRB Pharmacist Mock Test 2';
+  buildPalette();
+  if(QUESTIONS.length) renderQ(0);
+  startTimer();
+});
+</script>
+</body></html>

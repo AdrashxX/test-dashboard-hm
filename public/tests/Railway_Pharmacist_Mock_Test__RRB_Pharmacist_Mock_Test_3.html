@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RRB Pharmacist Mock Test 3</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--border:#e6eaf3;--text:#0b192d;--muted:#6b7280;--blue:#2b8ef6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--purple:#7c3aed;--shadow:0 2px 12px rgba(2,6,23,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+/* Top bar */
+.top{background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.bcrumb{font-weight:700} .bchip{margin-left:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#374151;border-radius:8px;padding:3px 8px;font-weight:700}
+.tsp{flex:1} .timer{background:#eef2ff;border:1px solid #c7d2fe;padding:4px 10px;border-radius:8px;font-weight:700}
+/* Main layout */
+.main{display:grid;grid-template-columns:1fr 340px;gap:16px;max-width:1200px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+/* Question header row (marking + timer + review) */
+.qhdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:700}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534} .pill.red{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+.qwrap{padding:16px}
+.qid{color:#6b7280;font-size:13px;margin-bottom:6px}
+.qtext{font-weight:700;line-height:1.6;margin:6px 0 14px 0}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;background:#fff;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;background:#fff}
+.opt.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,142,246,.15)}
+/* bottom actions */
+.bottom{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:#fff}
+.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn.ghost{background:#f8fafc}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Sidebar */
+.sidebar{padding:12px}
+.user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.uav{width:44px;height:44px;border-radius:50%;background:#fee2e2;color:#7f1d1d;font-weight:800;display:flex;align-items:center;justify-content:center}
+.uname{font-weight:700}
+.stat{border-top:1px solid var(--border);padding-top:10px;margin-top:6px}
+.statrow{display:flex;align-items:center;gap:8px;margin:8px 0;color:#111827}
+.sdot{width:10px;height:10px;border-radius:50%}
+.sgreen{background:#22c55e}.sred{background:#ef4444}.sgrey{background:#94a3b8}.spurple{background:#7c3aed}
+.palet{margin-top:10px;border-top:1px solid var(--border);padding-top:12px}
+.palgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.p{height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.p.active{outline:2px solid var(--purple)} .p.answered{background:#ecfdf5;border-color:#bbf7d0} .p.not-answered{background:#fee2e2;border-color:#fecaca}
+.subwrap{position:sticky;bottom:0;background:#fff;padding-top:12px}
+.submit{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--blue);background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+/* Result screen */
+.result{display:none;max-width:760px;margin:16px auto}
+.rbox{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.score{font-weight:900;font-size:36px;color:var(--blue);text-align:center}
+.subtle{text-align:center;color:#6b7280}
+.sol{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0}
+.sol .ok{background:#ecfdf5;border:1px solid #bbf7d0;border-radius:8px;padding:8px;margin:6px 0}
+.sol .bad{background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:8px;margin:6px 0}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="bcrumb">RRB Pharmacist Mock Test 3</div>
+    <span class="bchip">Pharmacy Part</span>
+    <div class="tsp"></div>
+    <div class="timer">Time Left: <span id="timer">--:--</span></div>
+  </div>
+
+  <div id="exam" class="main">
+    <!-- Center paper -->
+    <section class="card">
+      <div class="qhdr">
+        <div class="pill green">+4</div>
+        <div class="pill red">-1</div>
+        <div style="flex:1"></div>
+        <button class="btn ghost" onclick="toggleReview()">★ Mark for review</button>
+      </div>
+
+      <div class="qwrap">
+        <div class="qid" id="qid">Question-1</div>
+        <div class="qtext" id="qtext"></div>
+        <div id="opts"></div>
+      </div>
+
+      <div class="bottom">
+        <button class="btn ghost" onclick="prevQ()">‹ Previous</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" onclick="clearResp()">Clear Response</button>
+          <button class="btn primary" onclick="saveNext()">Save & Next ›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right sidebar -->
+    <aside class="card sidebar">
+      <div class="user">
+        <div class="uav">H</div>
+        <div>
+          <div class="uname">Harsh</div>
+          <div style="color:#6b7280;font-size:12px">Section</div>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statrow"><span class="sdot sgreen"></span> <b id="sAns">0</b> Answered</div>
+        <div class="statrow"><span class="sdot sred"></span> <b id="sNot">0</b> Not Answered</div>
+        <div class="statrow"><span class="sdot spurple"></span> <b id="sRev">0</b> Marked for Review</div>
+        <div class="statrow"><span class="sdot sgrey"></span> <b id="sNov">0</b> Not Visited</div>
+      </div>
+
+      <div class="palet">
+        <div style="font-weight:700;margin-bottom:8px">Pharmacy Part</div>
+        <div id="pal" class="palgrid"></div>
+      </div>
+
+      <div class="subwrap">
+        <button class="submit" onclick="finish()">Submit Test</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="result">
+    <div class="rbox">
+      <div class="score" id="score">0</div>
+      <div class="subtle" id="outof">OUT OF 0</div>
+      <div style="height:1px;background:#e5e7eb;margin:14px 0"></div>
+      <div id="summary" style="text-align:center"></div>
+    </div>
+    <div id="solutions" class="rbox" style="margin-top:16px"></div>
+  </div>
+
+<script>
+const QUESTIONS = [{"id": "67e1ad785690eb888cb4f645", "text": "Tetanus vaccine is indicated when a wound is contaminated with", "options": ["Oil", "Acid", "Ethanol", "Soil"], "correct_index": 3, "solution": "Ans - Soil - The\ntetanus vaccine is indicated when a wound is contaminated\nwith dirt, feces, saliva, rust, or soil. It's also\nrecommended if you're not sure if you've cleaned a wound enough\nafter exposure to these contaminants."}, {"id": "67e1ad785690ebe9d6b4f64a", "text": "The\nimmunoglobulin present in bronchial secretion is:", "options": ["IgA", "IgM", "IgD", "IgE"], "correct_index": 0, "solution": "Ans - IgA"}, {"id": "67e1ad785690ebc27fb4f64f", "text": "The body's\nbiological rhythms are regulated by:", "options": ["Thyroid hormone\nlevels in blood", "Melatonin", "Cortisol", "Catecholamines"], "correct_index": 1, "solution": "Melatonin"}, {"id": "67e1ad785690eb9206b4f654", "text": "Which of the\nfollowing extraction methods is particularly used for extraction\nof volatile oils?", "options": ["Percolation", "Expression", "Enfleurage", "Microwave\nextraction"], "correct_index": 2, "solution": "Enfleurage\nextraction method is used to be a perfume manufacturing technique\nthat consisted of immersing raw materials in a fatty substance to\nabsorb the scents."}, {"id": "67e1ad785690ebcd6cb4f659", "text": "Surgical\nsterilization belongs to which category of family planning\nmethods?", "options": ["Natural family\nplanning", "Hormonal methods", "Permanent birth\ncontrol", "IUD"], "correct_index": 2, "solution": "Permanent birth\ncontrol"}, {"id": "67e1ad785690ebfbeab4f65e", "text": "Mantoux test is\nused for detection of which disease?", "options": ["Malaria", "Typhoid", "Chikungunya", "Tuberculosis"], "correct_index": 3, "solution": "Tuberculosis"}, {"id": "67e1ad785690eb494db4f663", "text": "DPT vaccine is\ngiven by which route?", "options": ["Intramuscular", "Intravenous", "Intradermal", "Subcutaneous"], "correct_index": 0, "solution": "Intramuscular"}, {"id": "67e1ad785690ebc64ab4f668", "text": "Which of the\nfollowing is a viral disease?", "options": ["Filariasis", "Leprosy", "Influenza", "Diphtheria"], "correct_index": 2, "solution": "Influenza"}, {"id": "67e1ad785690eb1f60b4f66d", "text": "Brownian\nmovement of particles", "options": ["Prevent\nsedimentation", "Enhance\nsedimentation", "Assist in\nsedimentation", "Have no effect\non sedimentation"], "correct_index": 0, "solution": "Prevent\nsedimentation"}, {"id": "67e1ad785690ebc457b4f672", "text": "What is the\nanother name of Hansen's Disease?", "options": ["Syphilis", "Leprosy", "Gonorrhea", "Tetanus"], "correct_index": 1, "solution": "Leprosy"}, {"id": "67e1ad785690eb4254b4f677", "text": "The term 'Lock\nJaw' is used for which disease?", "options": ["Trachoma", "Leprosy", "Tetanus", "Rabies"], "correct_index": 2, "solution": "Tetanus"}, {"id": "67e1ad785690ebb9cbb4f67c", "text": "Which of the\nfollowing is an essential nutrient for a woman during her initial\nstages of pregnancy to prevent birth defects?", "options": ["Thiamin", "Folic acid", "Vitamin C", "Vitamin E"], "correct_index": 1, "solution": "Folic acid"}, {"id": "67e1ad785690ebca22b4f681", "text": "Varicella zoster\nvirus is a causative organism of which disease?", "options": ["Cholera", "Diphtheria", "Influenza", "Chickenpox"], "correct_index": 3, "solution": "Chickenpox"}, {"id": "67e1ad785690eb5016b4f686", "text": "In which year\nwas the National program for control of blindness introduced?", "options": ["1976", "1977", "1975", "1974"], "correct_index": 0, "solution": "1976"}, {"id": "67e1ad785690eb5a9bb4f68b", "text": "Which immunity\nis present by birth?", "options": ["Active immunity", "Passive immunity", "Innate immunity", "Acquired\nimmunity"], "correct_index": 2, "solution": "Innate immunity"}, {"id": "67e1ad785690eb79fdb4f690", "text": "Treponema\nPallidum is the causative agent of which disease?", "options": ["HIV", "Syphilis", "Gonorrhea", "Diphtheria"], "correct_index": 1, "solution": "Syphilis"}, {"id": "67e1ad785690eb5e20b4f695", "text": "Protein binding\nof a drug", "options": ["Decreases\ndistribution of the drug", "Decreases its\nhalf-life", "Enhances\nexcretion of the drug", "Increases\nbioavailability of the drug"], "correct_index": 0, "solution": "Decreases\ndistribution of the drug"}, {"id": "67e1ad785690eb44d1b4f69a", "text": "Which order of\nreaction is followed by photo decomposition of the drug", "options": ["First order", "Pseudo First\norder", "Second order", "Zero order"], "correct_index": 3, "solution": "Zero order"}, {"id": "67e1ad785690ebccf5b4f69f", "text": "Which is the\nactivity conducted for the Family Welfare Program?", "options": ["IUD program", "One child one\nnation policy", "Child marriage", "Malnutrition\nprogram"], "correct_index": 0, "solution": "IUD program"}, {"id": "67e1ad785690eb2835b4f6a4", "text": "Which deficiency\ncauses Beriberi?", "options": ["Vitamin B6", "Vitamin B12", "Vitamin B2", "Vitamin B1"], "correct_index": 3, "solution": "Vitamin B1"}, {"id": "67e1ad785690ebca46b4f6a9", "text": "Which one of the\nfollowing actions of opioid analgesics is mediated via the\nactivation of kappa receptors?", "options": ["Cerebral\nVascular dilation", "Decreased\nuterine tone", "Euphoria", "Sedation"], "correct_index": 3, "solution": "Sedation"}, {"id": "67e1ad785690ebed2eb4f6ae", "text": "For treatment\nand management of which disease, salbutamol is used as a first\nline of drug?", "options": ["Hypertension", "Allergy", "Asthma", "Diabetes"], "correct_index": 2, "solution": "Asthma"}, {"id": "67e1ad785690eb30bfb4f6b3", "text": "Which drug\nreduces the frequency and duration of episodes of apnoea that\noccur in some preterm infants in the first few weeks of life?", "options": ["Theophylline", "Salbutamol", "Budesonide", "Zileuton"], "correct_index": 0, "solution": "Theophylline"}, {"id": "67e1ad785690eb8ea4b4f6b8", "text": "Which of the\nfollowing terms suggests venereal disease?", "options": ["Tuberculosis", "Filariasis", "Leprosy", "Syphilis"], "correct_index": 3, "solution": "Syphilis"}, {"id": "67e1ad785690eb182ab4f6bd", "text": "Sucralfate is a/\nan:", "options": ["Ulcer protective\nagent", "Ulcer healing\nagen", "Antigastrin\nagent", "Helicobacter\npylori killer"], "correct_index": 0, "solution": "Ulcer protective\nagent"}, {"id": "67e1ad785690eb843eb4f6c2", "text": "In pupil, the\npharmacological actions of morphine produces ___________.", "options": ["Pin point pupil", "Mydriasis", "Nystagmus", "Glaucoma"], "correct_index": 0, "solution": "Pin point pupil"}, {"id": "67e1ad785690eb0503b4f6c7", "text": "Which one of the\nfollowing is Nondepolarising (competitive blockers)?", "options": ["d-Tubocurarine", "Decamethonium", "Succinylcholine", "Tizanidine"], "correct_index": 0, "solution": "d-Tubocurarine"}, {"id": "67e1ad785690eb9f97b4f6cc", "text": "Which cranial\nnerve is attached with the eye?", "options": ["2nd", "4th", "6th", "8th"], "correct_index": 0, "solution": "2nd"}, {"id": "67e1ad785690ebdf64b4f6d6", "text": "Micro emulsions\ncontain globules of the size about", "options": ["I micro meter", "0.1 micro meter", "0.01 micro meter", "10 micro meters"], "correct_index": 2, "solution": "0.01 micro meter"}, {"id": "67e1ad785690eb554cb4f6db", "text": "The example of\nβ2 adrenoreceptor agonists is ___________.", "options": ["Theophylline", "SalbutamoL", "Ipratropium\nbromide", "Cromolyn"], "correct_index": 1, "solution": "SalbutamoL"}, {"id": "67e1ad785690eb5fbeb4f6e0", "text": "What is the\nprocess where pharmacists communicate directly with patients to\nprovide medication information?", "options": ["Patient\nCounselling", "Therapeutic Drug\nMonitoring", "Medication\nDispensing", "ADR Reporting"], "correct_index": 0, "solution": "Patient\nCounselling"}, {"id": "67e1ad785690eb3a68b4f6e5", "text": "What is the\nendpoint measured in the microbial assay of antibiotics?", "options": ["Zone of\ninhibition", "Change in pH", "Colour change in\nthe medium", "Gas production"], "correct_index": 0, "solution": "Zone of\ninhibition"}, {"id": "67e1ad785690eb9607b4f6ea", "text": "Which of the\nfollowing is NOT the process of manufacturing soft gelatin\ncapsules?", "options": ["Plate Process", "Rotary Die\nProcess", "Dry Gum Method", "Accogel\nTechnology"], "correct_index": 2, "solution": "Dry Gum Method"}, {"id": "67e1ad785690eb49e0b4f6ef", "text": "Which of the\nfollowing is mucolytics?", "options": ["Codeine", "Dextromethorphan", "Bromhexine", "Guaifenesin\nGuaiphenesin"], "correct_index": 2, "solution": "Bromhexine"}, {"id": "67e1ad785690eb3943b4f6f4", "text": "Which one of the\nfollowing is potent H2- receptor antagonist?", "options": ["Ranitidine", "Misoprostol", "Octreotide", "Sucralfate"], "correct_index": 0, "solution": "Ranitidine"}, {"id": "67e1ad785690eb2b15b4f6f9", "text": "Fluoroquinolones\nacts by inhibiting ___________.", "options": ["DNA gyrase", "Protein\nsynthesis", "Cell wall\nsynthesis", "DNA function"], "correct_index": 0, "solution": "DNA gyrase"}, {"id": "67e1ad785690eb3160b4f6fe", "text": "Typhoid fever\naffects", "options": ["Respiratory\nsystem", "Urogenital\nsystem", "Gastrointestinal\nsystem", "Skin"], "correct_index": 2, "solution": "Gastrointestinal\nsystem"}, {"id": "67e1ad785690eb2f0cb4f703", "text": "Nootropic agents\nare also called as:", "options": ["Cognition\nenhancers", "Antitussives", "General\nanaesthetics", "Analgesics"], "correct_index": 0, "solution": "Cognition\nenhancers"}, {"id": "67e1ad785690ebce74b4f708", "text": "____ is used as\nan opacifier in hard gelatin capsules.", "options": ["Titanium dioxide", "Glycerine", "Polyhydric\nalcohol", "Sorbitol"], "correct_index": 0, "solution": "Titanium dioxide"}, {"id": "67e1ad785690ebcc45b4f70d", "text": "The efficiency\nof HEPA filter is ___________ %", "options": ["99.97%", "88.97%", "30.97%", "97.9"], "correct_index": 0, "solution": "99.97%"}, {"id": "67e1ad785690eb1772b4f712", "text": "Small pinholes\non the tablet surface are known as ________ defects.", "options": ["Mottling", "Cracking", "Capping", "Picking"], "correct_index": 3, "solution": "Picking"}, {"id": "67e1ad785690ebdcf2b4f71c", "text": "_________\ninjections are given into the subarachnoid space that surrounds\nthe spinal cord", "options": ["Intracisternal", "Intrathecal", "Peridural", "Intra-articular"], "correct_index": 1, "solution": "Intrathecal"}, {"id": "67e1ad785690eb9ed1b4f726", "text": "Glidants are\nused for ________", "options": ["Improving flow\nproperties", "Improving\nbinding", "Improved drug\nrelease", "Improved\ndisintegration"], "correct_index": 0, "solution": "Improving flow\nproperties"}, {"id": "67e1ad785690eb3866b4f72b", "text": "Type III glass\nis called _______", "options": ["General soda\nlime glass", "NP glass", "Borosilicate\nglass", "Treated soda\nlime glass"], "correct_index": 0, "solution": "General soda\nlime glass"}, {"id": "67e1ad785690eb8106b4f735", "text": "______ types of\nsteroids interact with androgen receptor and enhance muscle mass\nand male sex hormones", "options": ["Progestins", "Glucocorticoids", "Ergosteroids", "Anabolic\nSteroids"], "correct_index": 3, "solution": "Anabolic\nSteroids"}, {"id": "67e1ad785690eb2713b4f73a", "text": "Which of the\nfollowing disease is not caused by Rickettsiae?", "options": ["Typhus", "Trench fever", "Q-fever", "Kala Aza"], "correct_index": 3, "solution": "Kala Aza"}, {"id": "67e1ad785690ebe6b3b4f73f", "text": "______ is not a\ntype of a laxative which are the drugs that promote the evacuation\nof bowels and used in constipation.", "options": ["Senna", "Lactulose", "Docusate", "Loperamide"], "correct_index": 3, "solution": "Loperamide"}, {"id": "67e1ad785690eb2f0ab4f744", "text": "Which of the\ngiven disease is not caused by Fungi?", "options": ["Dhobi itch", "Ringworm", "Athlete’s\nfoot", "Filariasis"], "correct_index": 3, "solution": "Filariasis"}, {"id": "67e1ad785690eb3f20b4f749", "text": "The use of\nmonoclonal antibodies is:", "options": ["Immunotherapy", "Immunotherapy", "Blood\ntransfusion", "Organ\ntransfusion"], "correct_index": 0, "solution": "Immunotherapy"}, {"id": "67e1ad785690eba38ab4f74e", "text": "TDM is a tool\nused by clinicians to monitor and maintain drug levels __________", "options": ["below MEC", "above MEC", "above\ntherapeutic window", "within\ntherapeutic window"], "correct_index": 3, "solution": "within\ntherapeutic window"}, {"id": "67e1ad785690ebbafcb4f753", "text": "Which of the\nfollowing is the primary ethical duty of a pharmacist in relation\nto patients care?", "options": ["Ensuring the\nconfidentiality of patient information.", "Maximizing\nprofits from drug sales.", "Promoting only\nexpensive medicines.", "Delegating all\nresponsibilities to junior staff"], "correct_index": 0, "solution": "Ensuring the\nconfidentiality of patient information."}, {"id": "67e1ad785690ebd438b4f758", "text": "Which one of the\nfollowing is MAOB inhibitors?", "options": ["Carbidopa", "Bromocriptine", "Selegiline", "Promethazine"], "correct_index": 2, "solution": "Selegiline"}, {"id": "67e1ad785690eb25e7b4f75d", "text": "What does Post\ncibos mean?", "options": ["Before meal", "After meal", "After a drink", "Before a drink"], "correct_index": 1, "solution": "After meal"}, {"id": "67e1ad785690eb928cb4f762", "text": "What term is\nused for tapping sounds while measuring blood pressure using a\nsphygmomanometer?", "options": ["Karaoke sounds", "Carotid sounds", "Korotkoff sounds", "Carotenoid\nsounds"], "correct_index": 2, "solution": "Korotkoff sounds"}, {"id": "67e1ad785690ebef58b4f767", "text": "Which of the\nfollowing is used to denote the instruction to the patient in a\nprescription?", "options": ["Superscription", "Signa", "Inscription", "Signature"], "correct_index": 1, "solution": "Signa"}, {"id": "67e1ad785690eb66b8b4f771", "text": "What does LASA\ndrugs stand for?", "options": ["Look alike sound\nalike", "Less alike\nstrong alike", "Look along smell\nalong", "Less alike smell\nalike"], "correct_index": 0, "solution": "Look alike sound\nalike"}, {"id": "67e1ad785690eb7fabb4f776", "text": "What does the\nlatin term 'sos' mean?", "options": ["immediately", "at night", "when necessary", "everyday"], "correct_index": 2, "solution": "when necessary"}, {"id": "67e1ad785690eb3533b4f77b", "text": "In which method\nof inventory control, ordering cost and carrying cost are\nconsidered?", "options": ["ABC analysis", "EOQ", "VED analysis", "Perpetual\nInventory control"], "correct_index": 1, "solution": "EOQ"}, {"id": "67e1ad785690ebb15bb4f780", "text": "Household\nremedies are listed in which schedule of Drug and Cosmetic Rules?", "options": ["Schedule M", "Schedule H", "Schedule K", "Schedule G"], "correct_index": 2, "solution": "Schedule K"}, {"id": "67e1ad785690eb1f21b4f785", "text": "What does COPD\nstand for?", "options": ["Cardiac\nObstructive Primary Disorder", "Chronic\nObstructive Pulmonary Disorder", "Chronic\nObstructive Pituitary Disorder", "Chronic\nObstructive Peptic Disorder"], "correct_index": 1, "solution": "Chronic\nObstructive Pulmonary Disorder"}, {"id": "67e1ad785690ebdbffb4f78a", "text": "Which\nrespiratory condition is characterised by shortness of breath and\nbronchoconstriction", "options": ["Acute bronchitis", "Heart failure", "Asthma", "Pneumonia"], "correct_index": 2, "solution": "Asthma"}, {"id": "67e1ad785690ebf363b4f78f", "text": "Which of the\nfollowing medicines can interact with phenytoin", "options": ["Fluconazole", "Hyoscine", "Codeine", "Paracetamol"], "correct_index": 0, "solution": "Fluconazole"}, {"id": "67e1ad785690eb4f43b4f794", "text": "Which\nantihistamine has a license for pruritus?", "options": ["Chlorphenamine", "Cyproheptadine", "Azatadine", "Hydroxyzine"], "correct_index": 3, "solution": "Hydroxyzine"}, {"id": "67e1ad785690eb7961b4f799", "text": "Which of the\nfollowing has the maximum amount of triglycerides?", "options": ["VLDL", "Chylomicrons", "HDL", "LDL"], "correct_index": 1, "solution": "Chylomicrons"}, {"id": "67e1ad785690eb6f11b4f79e", "text": "C-type\nNatriuretic peptide is a marker of __________", "options": ["cardiac failure", "liver failure", "kidney failure", "bone marrow\nfailure"], "correct_index": 0, "solution": "cardiac failure"}, {"id": "67e1ad785690eb3ed4b4f7a8", "text": "Sweat chloride\nestimation is done in the diagnosis of ________", "options": ["ulcerative\ncolitis", "acute\npancreatitis", "cystic fibrosis", "crohn's disease"], "correct_index": 2, "solution": "cystic fibrosis"}, {"id": "67e1ad785690ebead1b4f7ad", "text": "In which of the\nfollowing conditions, serum amylase is elevated three fold?", "options": ["acute\npancreatitis", "acute gastritis", "acute colitis", "acute hepatitis"], "correct_index": 0, "solution": "acute\npancreatitis"}, {"id": "67e1ad785690eb4d95b4f7b2", "text": "Fecal occult\nblood test depends on ___________ activity of hemoglobin", "options": ["digestive", "amylase", "peroxidase", "lipase"], "correct_index": 2, "solution": "peroxidase"}, {"id": "67e1ad785690eb86c5b4f7b7", "text": "Which is the\npreferred site for blood collection in out patient department?", "options": ["Antecubital vein", "Femoral vein", "Central venous\naccess", "Popliteal vein"], "correct_index": 0, "solution": "Antecubital vein"}, {"id": "67e1ad785690ebfb9cb4f7bc", "text": "Which of the\nfollowing hormones also acts as a tumour marker for germ cell\ntumour?", "options": ["Growth hormone", "Thyroid\nstimulating hormone", "Beta human\nChorionic Gonadotropin", "Insulin"], "correct_index": 2, "solution": "Beta human\nChorionic Gonadotropin"}, {"id": "67bc9c4deefd0b5069c52e75", "text": "S\nis 4 places to the left of P who is on the extreme right and 5\nplaces to the right of F who is on the extreme left. How many\npersons are there in the row?\nS,\nएक\nपंक्ति\nके दाएं\nसिरे पर\nबैठे हुए\nP\nके\nबाईं ओर\nचौथे स्थान\nपर और\nपंक्ति\nके बाएं\nसिरे पर\nबैठे हुए\nF\nके\nदाईं ओर\nपांचवें\nस्थान\nपर बैठा\nहै। उस\nपंक्ति\nमें कुल\nकितने\nव्यक्ति\nहैं?", "options": ["10", "13", "12", "14"], "correct_index": 0, "solution": "10"}, {"id": "67bc9c4deefd0b2ccdc52e7a", "text": "The\nletters of the name of a fruit are H, I, T, L, I and C. If the\nletters are rearranged correctly, then what is the fourth letter\nof the word formed?\nH,\nI, T, L, I और\nC\nएक\nफल के\nनाम के\nअक्षर\nहैं। यदि\nइन अक्षरों\nको सार्थक\nक्रम में\nपुनर्व्यवस्थित\nकिया जाए,\nतो\nबनने वाले\nशब्द का\nचौथा अक्षर\nकौन-सा\nहोगा?", "options": ["C", "I", "T", "L"], "correct_index": 0, "solution": "C"}, {"id": "67bc9c4deefd0bc849c52e7f", "text": "What\nvalue should come in the place of question mark (?) in the\nfollowing question?\n5246\n× ? + 231×66 = 23009 + 7975\nनिम्नलिखित\nप्रश्न\nमें प्रश्न-चिह्न\n(?)\nके\nस्थान\nपर कौन-सा\nमान आना\nचाहिए?\n5246\n× ? + 231×66 = 23009 + 7975", "options": ["3", "4", "5", "6"], "correct_index": 0, "solution": "3"}, {"id": "67bc9c4deefd0b6d45c52e84", "text": "If\n16% of 25% of 75% of a number is 441, then what is the number?\nयदि\nकिसी संख्या\nके 75%\nके\n25%\nका\n16%,\n441 है,\nतो\nवह कौन-सी\nसंख्या\nहोगी?", "options": ["14700", "13720", "15700", "16700"], "correct_index": 0, "solution": "14700"}, {"id": "67bc9c4deefd0b3f01c52e89", "text": "The\naverage of 217 lab readings was 113 units. Later on, it was found\nthat a reading 330 was wrongly typed as 113. Find the correct\naverage.\n217\nलैब\nरीडिंग्स\nका औसत\n113\nयूनिट\nथा। बाद\nमें,\nयह\nपाया गया\nकि रीडिंग\n330\nको\nगलती से\n113\nटाइप\nकर दिया\nगया था।\nसही औसत\nज्ञात\nकीजिए।", "options": ["114", "115", "112", "118"], "correct_index": 0, "solution": "114"}, {"id": "67bc9c4deefd0be7c7c52e8e", "text": "A\ntrain, 662 m long, passes a platform which is 3874 m long in 63\nseconds. Find the speed of the train in m/sec.\n662\nm लंबी\nएक ट्रेन\n3874\nm लंबे\nप्लेटफॉर्म\nको 63\nसेकंड\nमें पार\nकरती है।\nट्रेन\nकी चाल\nm/sec\nमें\nज्ञात\nकीजिए।", "options": ["72", "68", "66", "64"], "correct_index": 0, "solution": "72"}, {"id": "67bc9c4deefd0b735fc52e93", "text": "Jefferson\ncan do a piece of work in 1066 days. If Joe is 30% more efficient\nthan Jefferson, find the number of days taken by Joe to do the\nsame piece of work.\nजेफरसन\nएक कार्य\nको 1066\nदिन\nमें कर\nसकता है।\nयदि जो,\nजेफरसन\nसे 30%\nअधिक\nकार्य-कुशल\nहै,\nतो\nजो द्वारा\nउसी कार्य\nको पूरा\nकरने में\nलगने वाले\nदिनों\nकी संख्या\nज्ञात\nकीजिए।", "options": ["810", "820", "830", "840"], "correct_index": 1, "solution": "820"}, {"id": "67bc9c4deefd0b7306c52e98", "text": "In\nthe summer, a survey was conducted among 3100 people about their\nfavourite Flavours of pizza. The following pie chart shows the\ndata:\nिम्नांकित\nपाई-चार्ट\nमें,\nगर्मियों\nमें 3100\nलोगों\nके बीच\nउनके\nपसंदीदा\nपिज़्ज़ा\nफ्लेवर\nको लेकर\nकिए गए\nएक सर्वेक्षण\nके आंकड़े\nदर्शाए\nगए हैं:\nHow\nmany more people like Pepperoni than Margherita?\nमार्गेरिटा\nफ्लेवर\nकी तुलना\nमें कितने\nअधिक लोगों\nको पेपरोनी\nफ्लेवर\nपसंद है\n?", "options": ["94", "93", "91", "92"], "correct_index": 1, "solution": "93"}, {"id": "67bc9c4deefd0b8f0cc52e9d", "text": "In\nthe summer, a survey was conducted among 3100 people about their\nfavourite Flavours of pizza. The following pie chart shows the\ndata:\nिम्नांकित\nपाई-चार्ट\nमें,\nगर्मियों\nमें 3100\nलोगों\nके बीच\nउनके\nपसंदीदा\nपिज़्ज़ा\nफ्लेवर\nको लेकर\nकिए गए\nएक सर्वेक्षण\nके आंकड़े\nदर्शाए\nगए हैं:\nHow\nmany people like Mushrooms?\nकितने\nलोगों\nको मशरूम\nफ्लेवर\nपसंद है\n?", "options": ["651", "661", "671", "681"], "correct_index": 0, "solution": "651"}, {"id": "67bc9c4deefd0b4f95c52ea2", "text": "In\nwhich of the following Indian states is the Bowenpally Biogas\nPlant situated?\nबोवेनपल्ली\nबायोगैस\nसंयंत्र\nनिम्नलिखित\nमें से\nकिस भारतीय\nराज्य\nमें स्थित\nहै?", "options": ["Madhya\nPradesh", "Rajasthan", "Telangana", "Goa"], "correct_index": 2, "solution": "Telangana"}, {"id": "67bc9c4deefd0b78cec52ea7", "text": "Which\ncountry recently joined the Shanghai Cooperation Organization\n(SCO) as a \"dialogue partner\"?\nहाल\nही में,\nकौन-सा\nदेश शंघाई\nकोऑपरेशन\nऑर्गेनाइजेशन\n(SCO)\nमें\n\"संवाद\nभागीदार\"\nके\nरूप में\nशामिल\nहुआ है?", "options": ["Ukraine", "Japan", "Saudi\nArabia", "USA"], "correct_index": 2, "solution": "Saudi\nArabia"}, {"id": "67bc9c4deefd0b3ee2c52eac", "text": "Who\nis the author of book Life on mars: collected stories?", "options": ["Namita\ngokhale", "Arundhati\nroy", "Jhumpa\nlahiri", "Sushmita\nsingh"], "correct_index": 0, "solution": "Namita\nGokhale"}, {"id": "67bc9c4deefd0be856c52eb1", "text": "The\nonly airport of Lakshadweep is located at: लक्षद्वीप\nका एकमात्र\nहवाई अड्डा\nकहाँ स्थित", "options": ["Agatti\nIsland", "Kalpeni\nIsland", "Minicoy\nIsland", "Kavaratti\nIsland"], "correct_index": 0, "solution": "Agatti\nIsland"}, {"id": "67bc9c4deefd0b42e0c52ec0", "text": "Where\nis Pangong Tso lake situated?\nपैंगोंगगों\nत्सो झील\nकहाँ स्थित\nहै ?", "options": ["Ladakh", "Himachal\nPradesh", "Jammu\nand Kashmir", "Uttarakhand"], "correct_index": 0, "solution": "Ladakh"}, {"id": "67bc9c4deefd0be78dc52ec5", "text": "Whose\nautobiography is 'The Indian Struggle 1920-1942'?\n'द\nइंडियन\nस्ट्रगल\n1920-1942'\nकिसकी\nआत्मकथा\nहै?", "options": ["Lala\nLajpat Rai", "Subhas\nChandra Bose", "Jawaharlal\nNehru", "Dadabhai\nNaoroji"], "correct_index": 1, "solution": "Subhas\nChandra Bose"}, {"id": "67bc9c4deefd0ba553c52eca", "text": "Which\nof the following numbers in the Venn Diagram represents only male\nclerks, where the biggest triangle represents male, the second\nbigger triangle represents female, circle represents teachers and\nSquare represents clerks?\nवेन\nआरेख में\nनिम्नलिखित\nमें से\nकौन-सी\nसंख्या\nकेवल पुरुष\nक्लर्कों\nको निरूपित\nकरती है,\nजहां\nसबसे बड़ा\nत्रिभुज\nपुरुष\nका निरूपण\nकरता है,\nदूसरा\nबड़ा\nत्रिभुज\nमहिला\nका निरूपण\nकरता है,\nवृत्त\nशिक्षकों\nका निरूपण\nकरता है\nऔर वर्ग\nक्लर्कों\nका निरूपण\nकरता है?", "options": ["7", "15", "4", "9"], "correct_index": 1, "solution": "15"}, {"id": "67bc9c4deefd0b71fec52ecf", "text": "Which\none of the following alternatives will perfectly complete the\ngiven figure?\nिम्नलिखित\nमें से\nकौन-सा\nविकल्प\nदी गई\nआकृति\nसटीकता\nसे पूर्ण\nकरेगा?", "options": ["", "", "", ""], "correct_index": 3, "solution": ""}, {"id": "67bc9c4deefd0b6119c52ed4", "text": "A\nsum of Rs.12350 yields an interest of Rs.5187 in 7 years at what\nrate of simple interest?(in %)\nRs.12350\nकी\nराशि पर\n7\nवर्षों\nमें Rs.5187\nब्याज\nके रूप\nमें प्राप्त\nहोते हैं।\nसाधारण\nब्याज\nकी दर\nज्ञात\nकीजिए।\n(%\nमें)", "options": ["6", "8", "10", "12"], "correct_index": 0, "solution": "6"}, {"id": "67bc9b8fd04688164cbeae45", "text": "Replace\nthe question mark with an option that follows the same logic\napplied in the first pair.\nSING\n: 39 :: DONE : ??\nप्रश्न-चिह्न\nको उस\nविकल्प\nसे प्रतिस्थापित\nकीजिए,\nजो\nपहले युग्म\nमें प्रयुक्त\nतर्क के\nसमान तर्क\nका अनुसरण\nकरता है।\nSING\n: 39 :: DONE : ??", "options": ["42", "34", "28", "54"], "correct_index": 2, "solution": "28"}, {"id": "67bc9b8fd046882283beae4f", "text": "Find\nthe next term in the given series.\nV39,\nR32, N25, J18, ?\nदी\nगई शृंखला\nका अगला\nपद ज्ञात\nकीजिए।\nV39,\nR32, N25, J18, ?", "options": ["F11", "F10", "E11", "G10"], "correct_index": 0, "solution": "F11"}, {"id": "67bc9b8fd046880ac6beae54", "text": "Find\nthe next number in the series.\n12,\n145, 300, 467, 656, ?\nदी\nगई शृंखला\nकी अगली\nसंख्या\nज्ञात\nकीजिए।\n12,\n145, 300, 467, 656, ?", "options": ["857", "805", "847", "865"], "correct_index": 0, "solution": "857"}, {"id": "6554c9b8be15c07a7b309554", "text": "Identify the shape that completes the pattern.", "options": ["", "", "", ""], "correct_index": 0, "solution": ""}, {"id": "6554c9b8be15c00480309559", "text": "Select the pair that has the same relationship as the predicted pair.", "options": ["", "", "", ""], "correct_index": 0, "solution": ""}, {"id": "6554c9b8be15c032ba309572", "text": "Find the average value of odd natural numbers between 22 to 38.", "options": ["30", "32", "29", "31"], "correct_index": 0, "solution": "30"}, {"id": "6554c9b8be15c00732309595", "text": "name the traditional folk dance which has recently entered the guinness book of world records for the largest traditional dance performed at a single venue?", "options": ["Jhumar", "Bihu", "Naga dance", "Kajri"], "correct_index": 1, "solution": "Bihu"}, {"id": "67e1b0bd4faef3b4848b957f", "text": "which football club won indian super league cup in 2024-25", "options": ["Mumbai CITY FC", "BENGALURU FC", "MOHUN BAGAN SUPER GIANT", "ODISA FC"], "correct_index": 2, "solution": "MOHUN BAGAN SUPER GIANT"}, {"id": "67e1b0bd4faef341958b9584", "text": "Which country recently became the largest exporter of pharmaceuticals in 2024?", "options": ["a) USA", "b) India", "c) China", "d) Germany"], "correct_index": 1, "solution": "b) India"}, {"id": "67e1b0bd4faef3a1de8b9589", "text": "The Vande Bharat Sleeper Train was recently introduced in India. Who manufactures it?", "options": ["a) BHEL", "b) Indian Railways", "c) Tata Group", "d) Integral Coach Factory (ICF)"], "correct_index": 3, "solution": "Answer: d) Integral Coach Factory (ICF)"}, {"id": "67e1b0bd4faef331648b958e", "text": "Who won the ICC Men's Cricket World Cup 2023?", "options": ["a) India", "b) Australia", "c) England", "d) South Africa"], "correct_index": 1, "solution": "b) Australia"}, {"id": "67e1b0bd4faef36e218b9593", "text": "In 2024, which space agency successfully landed a spacecraft on the Moon's South Pole?", "options": ["ISRO", "NASA", "Roscosmos", "SpaceX"], "correct_index": 0, "solution": "ISRO"}];
+const POS = 4; const NEG = -1;
+let TOTAL_SECONDS = 5400;
+
+let current=0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let visited = new Array(QUESTIONS.length).fill(false);
+let review  = new Array(QUESTIONS.length).fill(false);
+let timerInterval;
+
+function renderQ(i){
+  current=i; visited[i]=true;
+  const q = QUESTIONS[i] || {};
+  document.getElementById('qid').textContent = 'Question-'+(i+1);
+  document.getElementById('qtext').textContent = q.text || '';
+  const box = document.getElementById('opts'); box.innerHTML='';
+  (q.options||[]).forEach((op,j)=>{
+    const row = document.createElement('label'); row.className='opt'+(answers[i]===j?' selected':'');
+    const dot = document.createElement('span'); dot.className='rdot';
+    const input = document.createElement('input'); input.type='radio'; input.name='q'+i; input.value=String(j); input.style.display='none';
+    input.checked = (answers[i]===j);
+    input.onchange = ()=>{ answers[i]=j; renderQ(i); refreshStats(); };
+    row.appendChild(dot); row.appendChild(input); row.append(' '+op);
+    row.onclick = (ev)=>{ if(ev.target.tagName!=='INPUT'){ input.checked=true; input.dispatchEvent(new Event('change')); } };
+    box.appendChild(row);
+  });
+  highlightPalette();
+}
+
+function buildPalette(){
+  const pal = document.getElementById('pal'); pal.innerHTML='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const d = document.createElement('div'); d.className='p'; d.textContent = i+1;
+    d.onclick=()=>renderQ(i); pal.appendChild(d);
+  }
+  highlightPalette(); refreshStats();
+}
+function highlightPalette(){
+  const pal = document.getElementById('pal').children;
+  for(let i=0;i<pal.length;i++){
+    let cls='p';
+    if(!visited[i]){}
+    else if(answers[i]===null && !review[i]) cls+=' not-answered';
+    else if(answers[i]!==null && review[i]) cls+=' answered'; // treat as answered for color; review tracked separately
+    else if(answers[i]!==null) cls+=' answered';
+    else if(review[i]) cls+=' not-answered';
+    if(i===current) cls+=' active';
+    pal[i].className = cls;
+  }
+}
+function refreshStats(){
+  const pal = document.getElementById('pal').children;
+  let ans=0, na=0, rev=0, nv=0;
+  for(let i=0;i<pal.length;i++){
+    if(!visited[i]) nv++;
+    if(review[i]) rev++;
+    if(visited[i] && answers[i]===null) na++;
+    if(answers[i]!==null) ans++;
+  }
+  document.getElementById('sAns').textContent=ans;
+  document.getElementById('sNot').textContent=na;
+  document.getElementById('sRev').textContent=rev;
+  document.getElementById('sNov').textContent=nv;
+}
+function prevQ(){ if(current>0) renderQ(current-1); }
+function saveNext(){ if(current<QUESTIONS.length-1) renderQ(current+1); }
+function clearResp(){ answers[current]=null; renderQ(current); refreshStats(); }
+function toggleReview(){ review[current]=!review[current]; highlightPalette(); refreshStats(); }
+
+function finish(){
+  // stop timer
+  if (typeof timerInterval!=='undefined') try{ clearInterval(timerInterval); }catch(e){}
+
+  let score=0,correct=0,wrong=0,attempted=0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    const c=(QUESTIONS[i]||{}).correct_index;
+    const a=answers[i];
+    if(a!==null) attempted++;
+    if(c==null || a==null) continue;
+    if(Number(a)===Number(c)) {score+=POS;correct++;} else {score+=NEG;wrong++;}
+  }
+  const unattempted = QUESTIONS.length - attempted;
+
+  // hide exam, show results
+  document.getElementById('exam').style.display='none';
+  document.getElementById('result').style.display='block';
+
+  document.getElementById('score').textContent = String(score);
+  document.getElementById('outof').textContent = 'OUT OF '+(POS*QUESTIONS.length);
+  document.getElementById('summary').innerHTML =
+    'Correct: <b>'+correct+'</b> &nbsp; | &nbsp; Wrong: <b>'+wrong+
+    '</b> &nbsp; | &nbsp; Unattempted: <b>'+unattempted+'</b>';
+
+  // solutions
+  const sol = document.getElementById('solutions');
+  let h='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const q=QUESTIONS[i]||{}; const c=q.correct_index; const a=answers[i];
+    h += '<div class="sol"><div style="font-weight:700;margin-bottom:6px">Q.'+(i+1)+'</div>';
+    (q.options||[]).forEach((op,j)=>{
+      let cls='';
+      if(c!=null && j===c) cls=' ok';
+      else if(a!=null && j===a && c!=null && a!==c) cls=' bad';
+      h += '<div class="'+cls+'" >'+op+'</div>';
+    });
+    if(q.solution) h += '<div style="margin-top:6px;color:#334155"><small><b>Solution:</b> '+q.solution+'</small></div>';
+    h += '</div>';
+  }
+  sol.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+/* Timer */
+function startTimer(){
+  if (!TOTAL_SECONDS) return;
+  const t = document.getElementById('timer');
+  function tick(){
+    let m = Math.floor(TOTAL_SECONDS/60);
+    let s = TOTAL_SECONDS%60;
+    t.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if (TOTAL_SECONDS<=0) { clearInterval(timerInterval); return; }
+    TOTAL_SECONDS -= 1;
+  }
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.title = 'RRB Pharmacist Mock Test 3';
+  buildPalette();
+  if(QUESTIONS.length) renderQ(0);
+  startTimer();
+});
+</script>
+</body></html>
