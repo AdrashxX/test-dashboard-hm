@@ -1,19 +1,37 @@
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function Viewer() {
   const router = useRouter();
   const { file } = router.query;
+  const [filePath, setFilePath] = useState("");
 
-  if (!file) return <p>Loading...</p>;
+  useEffect(() => {
+    if (file) {
+      setFilePath(`/tests/${file}`);
+    }
+  }, [file]);
+
+  if (!file) {
+    return <p className="p-6">No test selected.</p>;
+  }
 
   return (
-    <div className="p-4 bg-gray-100 dark:bg-gray-900 min-h-screen dark:text-gray-100">
-      <a href="/" className="text-blue-600 dark:text-blue-400 underline">← Back to Dashboard</a>
-      <h1 className="text-2xl font-bold my-4">{file}</h1>
+    <div className="p-4 min-h-screen bg-gray-100">
+      <button
+        onClick={() => router.push("/")}
+        className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+      >
+        ← Back to Dashboard
+      </button>
+
+      <h1 className="text-xl font-bold mb-4">{file.replace(".html", "")}</h1>
+
       <iframe
-        src={`/tests/${file}`}
-        className="w-full h-[90vh] border rounded-lg shadow"
-      ></iframe>
+        src={filePath}
+        className="w-full h-[85vh] border rounded-lg shadow"
+        title="Test Viewer"
+      />
     </div>
   );
 }
