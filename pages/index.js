@@ -13,17 +13,14 @@ export async function getStaticProps() {
       let testName = file.replace(".html", "");
 
       if (file.includes("__")) {
-        // Case 1: Double underscore
         const parts = file.split("__");
         subject = parts[0];
         testName = parts[1].replace(".html", "");
       } else if (file.includes("_Test_")) {
-        // Case 2: Split around "_Test_"
         const parts = file.split("_Test_");
         subject = parts[0] + "_Test";
         testName = parts[1].replace(".html", "");
       } else {
-        // Case 3: fallback = split at last underscore
         const idx = file.lastIndexOf("_");
         if (idx !== -1) {
           subject = file.substring(0, idx);
@@ -39,11 +36,20 @@ export async function getStaticProps() {
   return { props: { subjects } };
 }
 
-
 export default function Home({ subjects }) {
   const [query, setQuery] = useState("");
+  const [open, setOpen] = useState({});
 
-  // Filter by query
+  const toggle = (subject) => {
+    setOpen((prev) => ({ ...prev, [subject]: !prev[subject] }));
+  };
+
+  const highlight = (text) => {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, "gi");
+    return text.replace(regex, "<mark>$1</mark>");
+  };
+
   const filteredSubjects = Object.fromEntries(
     Object.entries(subjects).map(([subject, tests]) => [
       subject,
@@ -68,21 +74,31 @@ export default function Home({ subjects }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Object.keys(filteredSubjects).map((subject) => (
           <div key={subject} className="bg-white rounded-2xl shadow-lg p-4">
-            <h2 className="text-xl font-semibold mb-2">
-              {subject} ({filteredSubjects[subject].length} tests)
-            </h2>
-            <ul className="list-disc ml-6">
-              {filteredSubjects[subject].map((test) => (
-                <li key={test.file}>
-                  <a
-                    href={`/viewer?file=${encodeURIComponent(test.file)}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {test.testName}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <button
+              onClick={() => toggle(subject)}
+              className="flex justify-between items-center w-full"
+            >
+              <h2 className="text-lg font-semibold">
+                {subject} ({filteredSubjects[subject].length} tests)
+              </h2>
+              <span>{open[subject] ? "▲" : "▼"}</span>
+            </button>
+
+            {open[subject] && (
+              <ul className="list-disc ml-6 mt-2 space-y-1">
+                {filteredSubjects[subject].map((test) => (
+                  <li key={test.file}>
+                    <a
+                      href={`/viewer?file=${encodeURIComponent(test.file)}`}
+                      className="text-blue-600 hover:underline"
+                      dangerouslySetInnerHTML={{
+                        __html: highlight(test.testName),
+                      }}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
       </div>
