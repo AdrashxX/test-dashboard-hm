@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pharmaceutics Mock Test</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--border:#e6eaf3;--text:#0b192d;--muted:#6b7280;--blue:#2b8ef6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--purple:#7c3aed;--shadow:0 2px 12px rgba(2,6,23,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+/* Top bar */
+.top{background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.bcrumb{font-weight:700} .bchip{margin-left:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#374151;border-radius:8px;padding:3px 8px;font-weight:700}
+.tsp{flex:1} .timer{background:#eef2ff;border:1px solid #c7d2fe;padding:4px 10px;border-radius:8px;font-weight:700}
+/* Main layout */
+.main{display:grid;grid-template-columns:1fr 340px;gap:16px;max-width:1200px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+/* Question header row (marking + timer + review) */
+.qhdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:700}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534} .pill.red{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+.qwrap{padding:16px}
+.qid{color:#6b7280;font-size:13px;margin-bottom:6px}
+.qtext{font-weight:700;line-height:1.6;margin:6px 0 14px 0}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;background:#fff;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;background:#fff}
+.opt.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,142,246,.15)}
+/* bottom actions */
+.bottom{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:#fff}
+.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn.ghost{background:#f8fafc}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Sidebar */
+.sidebar{padding:12px}
+.user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.uav{width:44px;height:44px;border-radius:50%;background:#fee2e2;color:#7f1d1d;font-weight:800;display:flex;align-items:center;justify-content:center}
+.uname{font-weight:700}
+.stat{border-top:1px solid var(--border);padding-top:10px;margin-top:6px}
+.statrow{display:flex;align-items:center;gap:8px;margin:8px 0;color:#111827}
+.sdot{width:10px;height:10px;border-radius:50%}
+.sgreen{background:#22c55e}.sred{background:#ef4444}.sgrey{background:#94a3b8}.spurple{background:#7c3aed}
+.palet{margin-top:10px;border-top:1px solid var(--border);padding-top:12px}
+.palgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.p{height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.p.active{outline:2px solid var(--purple)} .p.answered{background:#ecfdf5;border-color:#bbf7d0} .p.not-answered{background:#fee2e2;border-color:#fecaca}
+.subwrap{position:sticky;bottom:0;background:#fff;padding-top:12px}
+.submit{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--blue);background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+/* Result screen */
+.result{display:none;max-width:760px;margin:16px auto}
+.rbox{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.score{font-weight:900;font-size:36px;color:var(--blue);text-align:center}
+.subtle{text-align:center;color:#6b7280}
+.sol{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0}
+.sol .ok{background:#ecfdf5;border:1px solid #bbf7d0;border-radius:8px;padding:8px;margin:6px 0}
+.sol .bad{background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:8px;margin:6px 0}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="bcrumb">Pharmaceutics Mock Test</div>
+    <span class="bchip">Pharmaceutics</span>
+    <div class="tsp"></div>
+    <div class="timer">Time Left: <span id="timer">--:--</span></div>
+  </div>
+
+  <div id="exam" class="main">
+    <!-- Center paper -->
+    <section class="card">
+      <div class="qhdr">
+        <div class="pill green">+4</div>
+        <div class="pill red">-1</div>
+        <div style="flex:1"></div>
+        <button class="btn ghost" onclick="toggleReview()">★ Mark for review</button>
+      </div>
+
+      <div class="qwrap">
+        <div class="qid" id="qid">Question-1</div>
+        <div class="qtext" id="qtext"></div>
+        <div id="opts"></div>
+      </div>
+
+      <div class="bottom">
+        <button class="btn ghost" onclick="prevQ()">‹ Previous</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" onclick="clearResp()">Clear Response</button>
+          <button class="btn primary" onclick="saveNext()">Save & Next ›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right sidebar -->
+    <aside class="card sidebar">
+      <div class="user">
+        <div class="uav">H</div>
+        <div>
+          <div class="uname">Harsh</div>
+          <div style="color:#6b7280;font-size:12px">Section</div>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statrow"><span class="sdot sgreen"></span> <b id="sAns">0</b> Answered</div>
+        <div class="statrow"><span class="sdot sred"></span> <b id="sNot">0</b> Not Answered</div>
+        <div class="statrow"><span class="sdot spurple"></span> <b id="sRev">0</b> Marked for Review</div>
+        <div class="statrow"><span class="sdot sgrey"></span> <b id="sNov">0</b> Not Visited</div>
+      </div>
+
+      <div class="palet">
+        <div style="font-weight:700;margin-bottom:8px">Pharmaceutics</div>
+        <div id="pal" class="palgrid"></div>
+      </div>
+
+      <div class="subwrap">
+        <button class="submit" onclick="finish()">Submit Test</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="result">
+    <div class="rbox">
+      <div class="score" id="score">0</div>
+      <div class="subtle" id="outof">OUT OF 0</div>
+      <div style="height:1px;background:#e5e7eb;margin:14px 0"></div>
+      <div id="summary" style="text-align:center"></div>
+    </div>
+    <div id="solutions" class="rbox" style="margin-top:16px"></div>
+  </div>
+
+<script>
+const QUESTIONS = [{"id": "6543dfe24db8842eee7a4518", "text": "Epsom salt is?", "options": ["Copper sulphate", "Magnesium\nsulphate", "Ferrous sulphate", "Calcium sulphate"], "correct_index": 1, "solution": "Magnesium\nsulphate"}, {"id": "6543dfe24db884e07d7a43b5", "text": "Latin term\nS.O.S. means", "options": ["Take alternate\ndays", "Take immediately", "Take as directed", "Take when\nnecessary"], "correct_index": 3, "solution": "Take when\nnecessary"}, {"id": "6543dfe24db884d4507a43c4", "text": "Formula used for\ncalculating dose for an infant", "options": ["Dilling’s\nformula", "Clark’s\nformula", "Cowling’s\nformula", "Fried’s\nformula"], "correct_index": 3, "solution": "Fried’s\nformula"}, {"id": "6543dfe24db884a2607a43f1", "text": "Cab-O-sil is\nused as?", "options": ["Lubricant", "Anti adherent", "Glidant", "Disintegrant"], "correct_index": 2, "solution": "Glidant"}, {"id": "6543dfe24db8840aa57a4446", "text": "Fluid or\nsemi-fluids systems containing hydrated granules in a dispersion\nmedium are known as?", "options": ["Gels", "Creams", "Pastes", "Effervescent\ngranules"], "correct_index": 0, "solution": "Gels"}, {"id": "6543dfe24db88427d07a4545", "text": "Which among the\nfollowing drug formulation is required to be stored in\nrefrigerator?", "options": ["Emulsions", "Suspensions", "Vaccines", "Non-of the above"], "correct_index": 2, "solution": "Vaccines"}, {"id": "6543dfe24db8841bfd7a445f", "text": "Fiehe’s\ntest bis associated with", "options": ["Starch", "Honey", "Gum acacia", "Agar"], "correct_index": 1, "solution": "Honey"}, {"id": "6543dfe24db88487cf7a4473", "text": "Phenyl mercuric\nnitrate is used as preservative its effective concentration is?", "options": ["0.002%", "0.02%", "0.2%", "2.0%"], "correct_index": 0, "solution": "0.002%"}, {"id": "6543dfe24db88426577a44c8", "text": "The complete\nseparation of two phases in emulsion is called?", "options": ["Creaming", "Sedimenting", "Cracking", "Leaching"], "correct_index": 2, "solution": "Cracking"}, {"id": "6543dfe24db884693e7a4487", "text": "A cheating agent\nused in the case of poisoning is?", "options": ["Sodium phosphate", "Dimercaprol", "Ferroin", "Bismuth\nsubnitrate"], "correct_index": 1, "solution": "Dimercaprol"}, {"id": "6543dfe24db884653b7a4540", "text": "Which among the\nfollowing is a sterile preparation?", "options": ["Nasal drops", "Effervescent\ngranules", "Ophthalmic\npreparations", "Otic\npreparations"], "correct_index": 2, "solution": "Ophthalmic\npreparations"}, {"id": "6543dfe24db884d5c77a4333", "text": "Which of the\nfollowing is related to a suspension?", "options": ["Stocke’s\nlaw", "Brownian\nmovement", "Zeta potential", "Both A & C"], "correct_index": 3, "solution": "Both A & C"}, {"id": "6543dfe24db88440c67a43f6", "text": "Which type of\nmixer used for ointment formulation?", "options": ["Planetary mixer", "Double cone", "Zig zag type\nmixer", "Ribon mixer"], "correct_index": 0, "solution": "Planetary mixer"}, {"id": "6543dfe24db8844bf97a43fb", "text": "Inter dose\ninterval depends on?", "options": ["Half-life of\ndrug", "Age of patient", "Dose of drug", "None of these"], "correct_index": 0, "solution": "Half-life of\ndrug"}, {"id": "6543dfe24db8846c7a7a453b", "text": "Viscosity of\nagar solution is due to the presence of?", "options": ["Agarose", "Cellulose", "Agaropectin", "Cellobiose"], "correct_index": 2, "solution": "Agaropectin"}, {"id": "6543dfe24db884469f7a44e1", "text": "In relation to\nemulsion formation of a layer of relatively concentrated emulsion\nabove or below the surface is known as?", "options": ["Cracking", "Creaming", "Mottling", "Phase inversion"], "correct_index": 1, "solution": "Creaming"}, {"id": "6543dfe24db8847b667a43c9", "text": "Which one of the\nfollowing is an example for reversible process?", "options": ["Cracking", "Creaming", "Phase inversion", "Breaking"], "correct_index": 1, "solution": "Creaming"}, {"id": "6543dfe24db884635b7a433d", "text": "Creaming is a\nprocess?", "options": ["Reversible", "Irreversible", "Downward", "Both A & C"], "correct_index": 0, "solution": "Reversible"}, {"id": "6543dfe24db88450b27a4441", "text": "Due to\nincompatibility reasons parabens should not be added as\npreservative in?", "options": ["Haematinic syrup", "Cough syrup", "Antibiotic syrup", "Digestive syrup"], "correct_index": 0, "solution": "Haematinic syrup"}, {"id": "6543dfe24db884f86b7a440a", "text": "Hydrous wool fat\nis also known as?", "options": ["Paraffin wax", "Carbopol", "Macrogol", "Mineral oil"], "correct_index": 1, "solution": "Carbopol"}, {"id": "6543dfe24db884077f7a4428", "text": "How many grams\nof a drug should be used in preparing 500 ml of a 1: 2500\nsolution?", "options": ["0.2", "0.02", "0.4", "1.25"], "correct_index": 0, "solution": "0.2"}, {"id": "6543dfe24db884b6ec7a447d", "text": "Non drug part\nadded for formulation to aid dilution stability maintaining taste\nmasking etc is known as?", "options": ["Preservative", "Active\ningredient", "Additive", "Binding agent"], "correct_index": 2, "solution": "Additive"}, {"id": "6543dfe24db88405527a437e", "text": "Disposable\nsyringes are made up?", "options": ["Poly propylene", "Poly ethylene", "Poly styrene", "Poly tetra\nchloro-ethylene"], "correct_index": 0, "solution": "Poly propylene"}, {"id": "6543dfe24db8840fb07a4400", "text": "Aerosol intended\nfor administration to lungs should contain particles in the range\nof", "options": ["50-100\nmicro-meter", "0.5-100\nmicro-meter", "0.5-10\nmicro-meter", "0.2-20\nmicro-meter"], "correct_index": 2, "solution": "0.5-10\nmicro-meter"}, {"id": "6543dfe24db88470bf7a439c", "text": "Buffer is a\nsolution of", "options": ["Strong acid &\nits conjugate base", "Strong base &\nits conjugate acid", "Strong acid &\nstrong base", "Weak acid &\nits conjugate base"], "correct_index": 3, "solution": "Weak acid &\nits conjugate base"}, {"id": "6543dfe24db88420d67a43ec", "text": "Membrane filter\ntested by?", "options": ["Dissolution test", "Bubble point\ntest", "LAL test", "Retention test"], "correct_index": 1, "solution": "Bubble point\ntest"}, {"id": "6543dfe24db88499a17a446e", "text": "Food wrapped in\nnews papers is likely to get contaminated by?", "options": ["Magnesium", "Aluminium", "Lead", "Copper"], "correct_index": 2, "solution": "Lead"}, {"id": "6543dfe24db884ce837a4379", "text": "Dose dumping is\na problem in the formulation of?", "options": ["Compressed\ntablet", "Suppositories", "Soft gelatine\ncapsules", "Controlled\nrelease drug product"], "correct_index": 3, "solution": "Controlled\nrelease drug product"}, {"id": "6543dfe24db884f3d27a43e7", "text": "Water resistance\nglass container tested by measuring?", "options": ["Amount of alkali\nrelease into water", "Amount of acid\nrelease into water", "Turbidity", "Amount of\nsilicate in water"], "correct_index": 0, "solution": "Amount of alkali\nrelease into water"}, {"id": "6543dfe24db884c5cb7a4509", "text": "Ammonium\nchloride is used as?", "options": ["Alkalising agent", "Astringent", "Expectorant", "All the above"], "correct_index": 2, "solution": "Expectorant"}, {"id": "6543dfe24db8840ba57a44b4", "text": "The component of\ntablet machine which controls the shape & size of the tablet\nis?", "options": ["Hopper", "Punches", "Cam track", "Dies"], "correct_index": 3, "solution": "Dies"}, {"id": "6543dfe24db8844e587a4347", "text": "Which of the\nfollowing is used as a viscosity enhancer in ophthalmic\npreparation?", "options": ["Macrogol", "Polyvinyl\nalcohol", "Povidone", "All of the above"], "correct_index": 0, "solution": "Macrogol"}, {"id": "6543dfe24db88496587a44dc", "text": "Principle of\nsize reduction in ball mill is?", "options": ["Compression", "Impact", "Attrition", "Combination of\nimpact & attrition"], "correct_index": 3, "solution": "Combination of\nimpact & attrition"}, {"id": "6543dfe24db884cc2a7a4383", "text": "Reference for\ncomparing sweeteners is?", "options": ["Glucose", "Sucrose", "Mannitol", "Saccharin"], "correct_index": 1, "solution": "Sucrose"}, {"id": "6543dfe24db88445917a44af", "text": "Blood plasma &\nblood serum preparations are dried by?", "options": ["Freeze dryer", "Vaccume dryer", "Spray dryer", "Fluidized bed\ndryer"], "correct_index": 0, "solution": "Freeze dryer"}, {"id": "6543dfe24db884aa037a436a", "text": "In tablet\nformulation lactose is commonly used as?", "options": ["Binder", "Disintegrant", "Diluent", "Lubricant"], "correct_index": 2, "solution": "Diluent"}, {"id": "6543dfe24db884bb8d7a43d8", "text": "Example for a\nstimulant laxative", "options": ["Sodium potassium\ntartrate", "Liquid paraffin", "Milk of magnesia", "Phenol-phthalein"], "correct_index": 3, "solution": "Phenol-phthalein"}, {"id": "6543dfe24db8847d227a4365", "text": "Roto-sort is a\nmachine used to short out?", "options": ["Coated tablet", "Filled capsule", "Sealed ampules", "None of the\nabove"], "correct_index": 1, "solution": "Filled capsule"}, {"id": "6543dfe24db884db597a44be", "text": "Vitamin tablets\nare generally formulated as?", "options": ["Hypodermic\ntablets", "Sublingual\ntablets", "Effervescent\ntablets", "Chewable tablets"], "correct_index": 3, "solution": "Chewable tablets"}, {"id": "6543dfe24db8843bf47a43a1", "text": "Which of the\nformulation is not suitable to ocular administration", "options": ["Ointment", "Suspension", "Liniment", "Solution"], "correct_index": 2, "solution": "Liniment"}, {"id": "6543dfe24db88426ba7a438d", "text": "Which among this\nis precipitating germicides?", "options": ["Hydrogen\nperoxide", "Siler nitrate", "Sodium\nhypochlorite", "Hypochlorous\nacid"], "correct_index": 1, "solution": "Siler nitrate"}, {"id": "6543dfe24db884486d7a43dd", "text": "Tablets placed\nunder the tongue are called", "options": ["Buccal tablets", "Troches", "Sublingual\ntablets", "Lozenges"], "correct_index": 2, "solution": "Sublingual\ntablets"}, {"id": "6543dfe24db8847d137a4360", "text": "Partial or\ncomplete removal of the top or bottom of a tablet is known as?", "options": ["Capping", "Sticking", "Picking", "Mottling"], "correct_index": 0, "solution": "Capping"}, {"id": "6543dfe24db884bafd7a4522", "text": "Ratio of oil :\nwater : gum for preparation an emulsion using volatile oil?", "options": ["2:2:1", "4:2:1", "3:2:1", "1:1:2"], "correct_index": 0, "solution": "2:2:1"}, {"id": "6543dfe24db88456367a44d2", "text": "In tablets\nmanufacturing talc is used as", "options": ["Diluent", "Granulating\nagent", "Glidant", "Disintegrating\nagent"], "correct_index": 2, "solution": "Glidant"}, {"id": "6543dfe24db88462f07a4478", "text": "Sucrose on\nprolonged heating with calcium hydroxide solution under pressure\nyield?", "options": ["Gluconic acid", "Lactic acid", "Tartaric acid", "Saccharides acid"], "correct_index": 1, "solution": "Lactic acid"}, {"id": "6543dfe24db884edf87a4491", "text": "One fluid ounce\nis?", "options": ["60ml", "15ml", "30ml", "10ml"], "correct_index": 2, "solution": "30ml"}, {"id": "6543dfe24db884658c7a44d7", "text": "Glycerine or\nsorbitol is added to gelatine in the preparation of soft gelatine\ncapsules as?", "options": ["Preservatives", "Plasticizer", "Polishing agent", "Sweetening agent"], "correct_index": 1, "solution": "Plasticizer"}, {"id": "6543dfe24db884896a7a435b", "text": "Ingredients used\nfor capsulation in so capsule should flow by the gravity at a\ntemperature not exceeding?", "options": ["350C", "300C", "250C", "200C"], "correct_index": 0, "solution": "350C"}, {"id": "6543dfe24db8844d357a4536", "text": "Term used to\ndescribe partial or complete separation of top or bottom of the\ntablet?", "options": ["Lamination", "Capping", "Picking", "Chipping"], "correct_index": 1, "solution": "Capping"}, {"id": "6543dfe24db8842d917a434c", "text": "How many gm of\nsodium hydroxide should be dissolved in 1000 ml of distilled water\nto prepare 2N sodium hydroxide solution?", "options": ["40", "80", "20", "2"], "correct_index": 1, "solution": "80"}, {"id": "6543dfe24db884535a7a4414", "text": "Type 1 glass is?", "options": ["Soda lime glass", "SO2\ntreated soda lime glass", "Boro-silicate\nglass", "NP glass"], "correct_index": 2, "solution": "Boro-silicate glass"}, {"id": "6543dfe24db88468b77a4392", "text": "Which among the\nfollowing is the strongest acid?", "options": ["Amide", "Imide", "Sulfonamide", "Sulfonimide"], "correct_index": 3, "solution": "Sulfonimide"}, {"id": "6543dfe24db88444547a4405", "text": "the percentage of sucrose present in syrup IP is", "options": ["66.7%", "6.67 %", "85%", "65%"], "correct_index": 0, "solution": "66.7"}, {"id": "6543dfe24db88431a07a436f", "text": "Which of the\nfollowing is not added to chewing tablet?", "options": ["Gidant", "Disintegrant", "Lubricant", "Antiadhesive"], "correct_index": 1, "solution": "Disintegrant"}, {"id": "6543dfe24db88413317a43a6", "text": "Examples for\nanionic surfactant?", "options": ["Glycine", "Sodium dodecyl\nsulphate", "Tri alkyl\nammonium", "Poly ethylene\nglycol"], "correct_index": 1, "solution": "Sodium dodecyl\nsulphate"}, {"id": "6543dfe24db88438067a443c", "text": "The tablet\nhardness normally ranges in Kg?", "options": ["2kg", "5kg", "1kg", "0.5kg"], "correct_index": 1, "solution": "5kg"}, {"id": "6543dfe24db884225e7a43bf", "text": "Example for an\nartificial colour", "options": ["Caramel", "Chlo-prophyll", "Cochineal", "Annatto"], "correct_index": 0, "solution": "Caramel"}, {"id": "6543dfe24db88445d87a451d", "text": "Lanolin is?", "options": ["Beeswax", "Wool-fat", "Paraffine wax", "Borax"], "correct_index": 1, "solution": "Wool-fat"}, {"id": "6543dfe24db8842dfc7a4432", "text": "In which of the\nof the following techniques the sample is kept below triple point?", "options": ["Lyophillization", "Spray drying", "Spray congealing", "Centrifugation"], "correct_index": 0, "solution": "Lyophillization"}, {"id": "6543dfe24db88483ed7a44fa", "text": "Calamine IP is?", "options": ["Aluminium\nsilicate with ferric oxide", "Magnesium\nsilicate with ferric oxide", "Calcium oxide\nwith ferric oxide", "Zinc oxide with\nferric oxide"], "correct_index": 3, "solution": "Zinc oxide with\nferric oxide"}, {"id": "6543dfe24db884f43a7a44e6", "text": "When an\nhypotonic solution is injected into blood stream causes?", "options": ["Haemolysis", "Shrinkage of\nblood cells", "Sclerosis of\nveins", "No\ncharacteristic change"], "correct_index": 0, "solution": "Haemolysis"}, {"id": "6543dfe24db884ea437a43ce", "text": "Examples for a\ntablet disintegrants", "options": ["Lactose", "Acacia", "Primo-gel", "Talc"], "correct_index": 2, "solution": "Primo-gel"}, {"id": "6543dfe24db88444127a44a0", "text": "Agent promoting\neasy bowel evacuation termed as?", "options": ["Protective", "Antacid", "Adsorbents", "laxative"], "correct_index": 3, "solution": "laxative"}, {"id": "6543dfe24db8840f067a44ff", "text": "Which among the\nfollowing statement is false with respect to NaCl injection IP?", "options": ["Contains 0.9%\nw/v sterile solution of sodium chloride", "Ph of the\nsolution is between 4.5 & 7.0", "Contains added\nantimicrobial agents or preservatives", "Contains\napproximately 150 mmol of sodium ions"], "correct_index": 2, "solution": "Contains added\nantimicrobial agents or preservatives"}, {"id": "6543dfe24db8848c827a449b", "text": "A hypotonic\nsolution can be made isotonic the addition of", "options": ["Sodium chloride", "Potassium\nchloride", "Calcium chloride", "Magnesium\nchloride"], "correct_index": 0, "solution": "Sodium chloride"}, {"id": "6543dfe24db8842a087a43e2", "text": "Nitrous oxide is\nstored in cylinders painted by", "options": ["Green colour", "Grey colour", "Blue colour", "None of the\nabove"], "correct_index": 2, "solution": "Blue colour"}, {"id": "6543dfe24db8844cb07a4388", "text": "Which of the\nfollowing formulations would be considered as an oropharyngeal\nformulation?", "options": ["Linctus", "Mouthwash", "Elixir", "Syrup"], "correct_index": 1, "solution": "Mouthwash"}, {"id": "6543dfe24db8846c5b7a44f0", "text": "0.1 gms\ncontains?", "options": ["1000 mg", "100 mg", "10 mg", "1 mg"], "correct_index": 1, "solution": "100 mg"}, {"id": "6543dfe24db884e0597a4482", "text": "Which of the\nfollowing is a natural emulsifying agent obtained from vegetable?", "options": ["Starch", "Gelatine", "Egg yolk", "Wool fat"], "correct_index": 0, "solution": "Starch"}, {"id": "6543dfe24db8848dcd7a444b", "text": "Higher zeta\npotential gives deflocculated type suspension & results in?", "options": ["Sedimentation", "Transparent form", "Cake form", "Brittle form"], "correct_index": 2, "solution": "Cake form"}, {"id": "6543dfe24db88454907a43ab", "text": "1 grain is?", "options": ["15mg", "60mg", "15g", "450mg"], "correct_index": 1, "solution": "60mg"}, {"id": "6543dfe24db8841d967a44c3", "text": "Which of the\nfollowing is used as a binder?", "options": ["Talc", "Starch", "Cellulose", "Kaolin"], "correct_index": 1, "solution": "Starch"}, {"id": "6543dfe24db884e0df7a4351", "text": "Water for\ninjection differs from sterile distilled water as it is free from?", "options": ["Pyrogen", "Carbon dioxide", "Preservative", "Antioxidants"], "correct_index": 0, "solution": "Pyrogen"}, {"id": "6543dfe24db88408937a4513", "text": "Colloidal\ndispersion of liquids or solids in gases are?", "options": ["Aerosols", "Emulsion", "Creams", "Suspension"], "correct_index": 0, "solution": "Aerosols"}, {"id": "6543dfe24db88475ff7a43b0", "text": "Calamine I.P. is", "options": ["Zinc oxide with\nferric chloride", "Basic zinc\ncarbonate", "Zinc carbonate\nwith ferric oxide", "Calcium oxide\nwith ferric oxide"], "correct_index": 0, "solution": "Zinc oxide with\nferric chloride"}, {"id": "6543dfe24db88401017a440f", "text": "Which of the\nfollowing is hermetically sealed?", "options": ["Ampoules", "Vials", "LVP bottles", "None of these"], "correct_index": 0, "solution": "Ampoules"}, {"id": "6543dfe24db884e2657a441e", "text": "Benzalkonium\nchloride id added to LVP in concentration of?", "options": ["0.002% w/v", "0.2% w/v", "0.0002% w/v", "0.01% w/v"], "correct_index": 3, "solution": "0.01% w/v"}, {"id": "6543dfe24db88435177a4464", "text": "Fine powder is a\npowder of which all the particles pass through a sieve with\nnominal mesh aperture size of?", "options": ["1.7micro meter", "710micro meter", "355micro meter", "180micro meter"], "correct_index": 3, "solution": "180micro meter"}, {"id": "6543dfe24db884de007a4423", "text": "In the\npreparation of the ointments, macrogols are used as?", "options": ["Water soluble\nbase", "Hydrocarbon base", "Absorption base", "Oleogenous base"], "correct_index": 0, "solution": "Water soluble\nbase"}, {"id": "6543dfe24db884e5707a4419", "text": "Water for injection differs from sterile water for injection as it is free from ...", "options": ["Pyrogens", "Carbon f dioxide", "Antioxidant", "Preservatives"], "correct_index": 0, "solution": "Pyrogens"}, {"id": "6543dfe24db8840f727a4397", "text": "Air-tight\ncontainers are used for?", "options": ["Liquid\npreparations", "Capsules", "Injectable\nproducts", "Tablets"], "correct_index": 2, "solution": "Injectable\nproducts"}, {"id": "6543dfe24db884fd4d7a4338", "text": "Equation that\ngives the rate of drug dissolution from a tablet is?", "options": ["Fick’s law", "Noyes whitney", "Henderson\nhasselblach", "Michaelis-menten"], "correct_index": 1, "solution": "Noyes whitney"}, {"id": "6543dfe24db884fde47a44aa", "text": "Ocuserts are?", "options": ["Ear preparations", "Nasal\npreparations", "Oral\npreparations", "Eye preparations"], "correct_index": 3, "solution": "Eye preparations"}, {"id": "6543dfe24db8846b677a44b9", "text": "Calamine is?", "options": ["Basic zinc oxide", "Basic zinc\nsulphide", "Basic zinc\ncarbonate", "Basic zinc\nhydroxide"], "correct_index": 0, "solution": "Basic zinc oxide"}, {"id": "6543dfe24db8843f997a43d3", "text": "In sugar coating\nsub-coating is done", "options": ["To round the\nedges & build up the tablet surface", "To cover &\nfill the imperfections in the tablet surface", "To prevent\nmoisture penetration", "To obtain the\ndesired luster"], "correct_index": 0, "solution": "To round the\nedges & build up the tablet surface"}, {"id": "6543dfe24db88405957a44cd", "text": "Name the world’s\nthinnest & strongest nano material?", "options": ["Graphene", "Titanium\nnanorods", "Iron nanorods", "Copper nanowires"], "correct_index": 0, "solution": "Graphene"}, {"id": "6543dfe24db88459e67a4469", "text": "Alcoholic\npreparations can be stored in warehouse for a maximum period of?", "options": ["10 years", "3 years", "7 years", "1 years"], "correct_index": 1, "solution": "3 years"}, {"id": "6543dfe24db884a9c47a44f5", "text": "Volume of 95%\nalcohol required to prepare 500ml of 20% alcohol is?", "options": ["80ml", "50ml", "105ml", "150ml"], "correct_index": 2, "solution": "105ml"}, {"id": "6543dfe24db8842dce7a442d", "text": "The dip tube in\nan aerosol container is made from one of the following choose the\ncorrect one", "options": ["Poly propylene", "Glass", "Stainless steel", "Aluminium"], "correct_index": 0, "solution": "Poly propylene"}, {"id": "6543dfe24db88487a27a4374", "text": "In sugar coating\ntablets sub-coating is done?", "options": ["To prevent\nmoisture absorption", "To round edges &\nbuild tablet size", "To prevent the\ntablets from breaking due to vibration", "To prevent the\ntablets from breaking due to the vibration"], "correct_index": 1, "solution": "To round edges &\nbuild tablet size"}, {"id": "6543dfe24db88478e67a4450", "text": "Emulsifying\nagent should be able to reduce interfacial tension less than?", "options": ["1 dynes/cm", "10 dynes/cm", "20 dynes/cm", "30 dynes/cm"], "correct_index": 1, "solution": "10 dynes/cm"}, {"id": "6543dfe24db8845f437a4504", "text": "Potassium\npermanganate is an example for?", "options": ["Acidifying\nagents", "Alkalising agent", "Reducing agent", "Oxidising agent"], "correct_index": 3, "solution": "Oxidising agent"}, {"id": "6543dfe24db884487d7a4342", "text": "An example of\nnon-ionic polymer?", "options": ["Cellulose", "Pectin", "Glucose", "Methyl cellulose"], "correct_index": 3, "solution": "Methyl cellulose"}, {"id": "6543dfe24db88458fd7a4531", "text": "Use of potassium\niodide in iodine solution?", "options": ["Increase the\nsolubility of iodine", "Decrease the\nsolubility of iodine", "Reduce the\ntoxicity of iodine", "Improve the\nappearance of iodine solution"], "correct_index": 0, "solution": "Increase the\nsolubility of iodine"}, {"id": "6543dfe24db8843fab7a445a", "text": "Which of the\nfollowing minerals form bones & teeth?", "options": ["Calcium &\nphosphorous", "Potassium &\ncalcium", "Sulphur &\niron", "Phosphorous &\niron"], "correct_index": 0, "solution": "Calcium &\nphosphorous"}, {"id": "6543dfe24db884dda17a4455", "text": "HBL system is\nused to classify?", "options": ["Surfactants", "Preservatives", "Antioxidants", "Sequestering\nagents"], "correct_index": 0, "solution": "Surfactants"}, {"id": "6543dfe24db884509c7a4437", "text": "Stalagmometer is\nused for the measurement of?", "options": ["Volume of liquid", "Viscosity of\nliquid", "Surface, tension\nof liquid", "Density of\nliquid"], "correct_index": 2, "solution": "Surface, tension\nof liquid"}, {"id": "6543dfe24db8845adf7a4496", "text": "Sterols belongs\nto the class of?", "options": ["Lipid", "Waxes", "Carbohydrates", "Proteins"], "correct_index": 0, "solution": "Lipid"}, {"id": "6543dfe24db884518e7a4356", "text": "Unequal\ndistribution of colour on a tablet refer to?", "options": ["Picking", "Sticking", "Capping", "Mottling"], "correct_index": 3, "solution": "Mottling"}, {"id": "6543dfe24db88405397a448c", "text": "Filter sheet\nmade of cellulose are?", "options": ["Seitz filter", "Membrane filter", "Glass fiber\nfiler", "Sintered glass\nfilter"], "correct_index": 1, "solution": "Membrane filter"}, {"id": "6543dfe24db88459837a44eb", "text": "Sodium lauryl\nsulphate is?", "options": ["Cationic\nsurface-active agents", "Ampholytic\nsurface-active agents", "Non-ionic\nsurface-active agents", "Anionic\nsurface-active agents"], "correct_index": 3, "solution": "Anionic\nsurface-active agents"}, {"id": "6543dfe24db8844bae7a44a5", "text": "Creams are?", "options": ["Emulsions", "Sub-pensions", "Ointments", "Pastes"], "correct_index": 0, "solution": "Emulsions"}, {"id": "6543dfe24db88433807a450e", "text": "An antidote\nwhich can be used in cyanide poisoning?", "options": ["Sodium\nbicarbonate", "Sodium nitrate", "Dimercaprol", "Sodium\nbisulphate"], "correct_index": 1, "solution": "Sodium nitrate"}, {"id": "6543dfe24db8840f0c7a43ba", "text": "As per I.P.\nstore in a cool place means", "options": ["Store at room\ntemperature", "Store in a\nrefrigerator", "Store between 80\nto 250 C", "Store between 20\nto 80 C"], "correct_index": 2, "solution": "Store between 80\nto 250 C"}];
+const POS = 4; const NEG = -1;
+let TOTAL_SECONDS = 5400;
+
+let current=0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let visited = new Array(QUESTIONS.length).fill(false);
+let review  = new Array(QUESTIONS.length).fill(false);
+let timerInterval;
+
+function renderQ(i){
+  current=i; visited[i]=true;
+  const q = QUESTIONS[i] || {};
+  document.getElementById('qid').textContent = 'Question-'+(i+1);
+  document.getElementById('qtext').textContent = q.text || '';
+  const box = document.getElementById('opts'); box.innerHTML='';
+  (q.options||[]).forEach((op,j)=>{
+    const row = document.createElement('label'); row.className='opt'+(answers[i]===j?' selected':'');
+    const dot = document.createElement('span'); dot.className='rdot';
+    const input = document.createElement('input'); input.type='radio'; input.name='q'+i; input.value=String(j); input.style.display='none';
+    input.checked = (answers[i]===j);
+    input.onchange = ()=>{ answers[i]=j; renderQ(i); refreshStats(); };
+    row.appendChild(dot); row.appendChild(input); row.append(' '+op);
+    row.onclick = (ev)=>{ if(ev.target.tagName!=='INPUT'){ input.checked=true; input.dispatchEvent(new Event('change')); } };
+    box.appendChild(row);
+  });
+  highlightPalette();
+}
+
+function buildPalette(){
+  const pal = document.getElementById('pal'); pal.innerHTML='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const d = document.createElement('div'); d.className='p'; d.textContent = i+1;
+    d.onclick=()=>renderQ(i); pal.appendChild(d);
+  }
+  highlightPalette(); refreshStats();
+}
+function highlightPalette(){
+  const pal = document.getElementById('pal').children;
+  for(let i=0;i<pal.length;i++){
+    let cls='p';
+    if(!visited[i]){}
+    else if(answers[i]===null && !review[i]) cls+=' not-answered';
+    else if(answers[i]!==null && review[i]) cls+=' answered'; // treat as answered for color; review tracked separately
+    else if(answers[i]!==null) cls+=' answered';
+    else if(review[i]) cls+=' not-answered';
+    if(i===current) cls+=' active';
+    pal[i].className = cls;
+  }
+}
+function refreshStats(){
+  const pal = document.getElementById('pal').children;
+  let ans=0, na=0, rev=0, nv=0;
+  for(let i=0;i<pal.length;i++){
+    if(!visited[i]) nv++;
+    if(review[i]) rev++;
+    if(visited[i] && answers[i]===null) na++;
+    if(answers[i]!==null) ans++;
+  }
+  document.getElementById('sAns').textContent=ans;
+  document.getElementById('sNot').textContent=na;
+  document.getElementById('sRev').textContent=rev;
+  document.getElementById('sNov').textContent=nv;
+}
+function prevQ(){ if(current>0) renderQ(current-1); }
+function saveNext(){ if(current<QUESTIONS.length-1) renderQ(current+1); }
+function clearResp(){ answers[current]=null; renderQ(current); refreshStats(); }
+function toggleReview(){ review[current]=!review[current]; highlightPalette(); refreshStats(); }
+
+function finish(){
+  // stop timer
+  if (typeof timerInterval!=='undefined') try{ clearInterval(timerInterval); }catch(e){}
+
+  let score=0,correct=0,wrong=0,attempted=0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    const c=(QUESTIONS[i]||{}).correct_index;
+    const a=answers[i];
+    if(a!==null) attempted++;
+    if(c==null || a==null) continue;
+    if(Number(a)===Number(c)) {score+=POS;correct++;} else {score+=NEG;wrong++;}
+  }
+  const unattempted = QUESTIONS.length - attempted;
+
+  // hide exam, show results
+  document.getElementById('exam').style.display='none';
+  document.getElementById('result').style.display='block';
+
+  document.getElementById('score').textContent = String(score);
+  document.getElementById('outof').textContent = 'OUT OF '+(POS*QUESTIONS.length);
+  document.getElementById('summary').innerHTML =
+    'Correct: <b>'+correct+'</b> &nbsp; | &nbsp; Wrong: <b>'+wrong+
+    '</b> &nbsp; | &nbsp; Unattempted: <b>'+unattempted+'</b>';
+
+  // solutions
+  const sol = document.getElementById('solutions');
+  let h='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const q=QUESTIONS[i]||{}; const c=q.correct_index; const a=answers[i];
+    h += '<div class="sol"><div style="font-weight:700;margin-bottom:6px">Q.'+(i+1)+'</div>';
+    (q.options||[]).forEach((op,j)=>{
+      let cls='';
+      if(c!=null && j===c) cls=' ok';
+      else if(a!=null && j===a && c!=null && a!==c) cls=' bad';
+      h += '<div class="'+cls+'" >'+op+'</div>';
+    });
+    if(q.solution) h += '<div style="margin-top:6px;color:#334155"><small><b>Solution:</b> '+q.solution+'</small></div>';
+    h += '</div>';
+  }
+  sol.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+/* Timer */
+function startTimer(){
+  if (!TOTAL_SECONDS) return;
+  const t = document.getElementById('timer');
+  function tick(){
+    let m = Math.floor(TOTAL_SECONDS/60);
+    let s = TOTAL_SECONDS%60;
+    t.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if (TOTAL_SECONDS<=0) { clearInterval(timerInterval); return; }
+    TOTAL_SECONDS -= 1;
+  }
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.title = 'Pharmaceutics Mock Test';
+  buildPalette();
+  if(QUESTIONS.length) renderQ(0);
+  startTimer();
+});
+</script>
+</body></html>

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Biochemistry Mock Test</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--border:#e6eaf3;--text:#0b192d;--muted:#6b7280;--blue:#2b8ef6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--purple:#7c3aed;--shadow:0 2px 12px rgba(2,6,23,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+/* Top bar */
+.top{background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.bcrumb{font-weight:700} .bchip{margin-left:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#374151;border-radius:8px;padding:3px 8px;font-weight:700}
+.tsp{flex:1} .timer{background:#eef2ff;border:1px solid #c7d2fe;padding:4px 10px;border-radius:8px;font-weight:700}
+/* Main layout */
+.main{display:grid;grid-template-columns:1fr 340px;gap:16px;max-width:1200px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+/* Question header row (marking + timer + review) */
+.qhdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:700}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534} .pill.red{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+.qwrap{padding:16px}
+.qid{color:#6b7280;font-size:13px;margin-bottom:6px}
+.qtext{font-weight:700;line-height:1.6;margin:6px 0 14px 0}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;background:#fff;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;background:#fff}
+.opt.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,142,246,.15)}
+/* bottom actions */
+.bottom{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:#fff}
+.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn.ghost{background:#f8fafc}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Sidebar */
+.sidebar{padding:12px}
+.user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.uav{width:44px;height:44px;border-radius:50%;background:#fee2e2;color:#7f1d1d;font-weight:800;display:flex;align-items:center;justify-content:center}
+.uname{font-weight:700}
+.stat{border-top:1px solid var(--border);padding-top:10px;margin-top:6px}
+.statrow{display:flex;align-items:center;gap:8px;margin:8px 0;color:#111827}
+.sdot{width:10px;height:10px;border-radius:50%}
+.sgreen{background:#22c55e}.sred{background:#ef4444}.sgrey{background:#94a3b8}.spurple{background:#7c3aed}
+.palet{margin-top:10px;border-top:1px solid var(--border);padding-top:12px}
+.palgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.p{height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.p.active{outline:2px solid var(--purple)} .p.answered{background:#ecfdf5;border-color:#bbf7d0} .p.not-answered{background:#fee2e2;border-color:#fecaca}
+.subwrap{position:sticky;bottom:0;background:#fff;padding-top:12px}
+.submit{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--blue);background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+/* Result screen */
+.result{display:none;max-width:760px;margin:16px auto}
+.rbox{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.score{font-weight:900;font-size:36px;color:var(--blue);text-align:center}
+.subtle{text-align:center;color:#6b7280}
+.sol{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0}
+.sol .ok{background:#ecfdf5;border:1px solid #bbf7d0;border-radius:8px;padding:8px;margin:6px 0}
+.sol .bad{background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:8px;margin:6px 0}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="bcrumb">Biochemistry Mock Test</div>
+    <span class="bchip">Biochemistry</span>
+    <div class="tsp"></div>
+    <div class="timer">Time Left: <span id="timer">--:--</span></div>
+  </div>
+
+  <div id="exam" class="main">
+    <!-- Center paper -->
+    <section class="card">
+      <div class="qhdr">
+        <div class="pill green">+4</div>
+        <div class="pill red">-1</div>
+        <div style="flex:1"></div>
+        <button class="btn ghost" onclick="toggleReview()">★ Mark for review</button>
+      </div>
+
+      <div class="qwrap">
+        <div class="qid" id="qid">Question-1</div>
+        <div class="qtext" id="qtext"></div>
+        <div id="opts"></div>
+      </div>
+
+      <div class="bottom">
+        <button class="btn ghost" onclick="prevQ()">‹ Previous</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" onclick="clearResp()">Clear Response</button>
+          <button class="btn primary" onclick="saveNext()">Save & Next ›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right sidebar -->
+    <aside class="card sidebar">
+      <div class="user">
+        <div class="uav">H</div>
+        <div>
+          <div class="uname">Harsh</div>
+          <div style="color:#6b7280;font-size:12px">Section</div>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statrow"><span class="sdot sgreen"></span> <b id="sAns">0</b> Answered</div>
+        <div class="statrow"><span class="sdot sred"></span> <b id="sNot">0</b> Not Answered</div>
+        <div class="statrow"><span class="sdot spurple"></span> <b id="sRev">0</b> Marked for Review</div>
+        <div class="statrow"><span class="sdot sgrey"></span> <b id="sNov">0</b> Not Visited</div>
+      </div>
+
+      <div class="palet">
+        <div style="font-weight:700;margin-bottom:8px">Biochemistry</div>
+        <div id="pal" class="palgrid"></div>
+      </div>
+
+      <div class="subwrap">
+        <button class="submit" onclick="finish()">Submit Test</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="result">
+    <div class="rbox">
+      <div class="score" id="score">0</div>
+      <div class="subtle" id="outof">OUT OF 0</div>
+      <div style="height:1px;background:#e5e7eb;margin:14px 0"></div>
+      <div id="summary" style="text-align:center"></div>
+    </div>
+    <div id="solutions" class="rbox" style="margin-top:16px"></div>
+  </div>
+
+<script>
+const QUESTIONS = [{"id": "65493e1e8002b753b4ded91e", "text": "In mammary\nglands milk secretion occurs due to?", "options": ["Estrogen &\nprogesterone", "Prolactin", "Oxytocin", "Progesterone"], "correct_index": 1, "solution": "Prolactin"}, {"id": "65493e1e8002b76cbcded99b", "text": "Loosening of\nteeth gingivitis & haemorrhage occur in the deficiency of?", "options": ["Vitamin K", "Vitamin B1", "Vitamin B6", "Vitamin C"], "correct_index": 3, "solution": "Vitamin C"}, {"id": "65493e1e8002b7df10dedab8", "text": "Fatty acids in\nthe body are mostly oxidized by?", "options": ["Alpha-oxidase", "Beta-oxidase", "Delta-oxidase", "All of the above"], "correct_index": 1, "solution": "Beta-oxidase"}, {"id": "65493e1e8002b7e1e8deda5e", "text": "The end product\nof pyrimidine metabolism in animal cells is?", "options": ["Beta alanine", "Ribitol", "Uric acid", "Urea"], "correct_index": 0, "solution": "Beta alanine"}, {"id": "65493e1e8002b730e8ded8f1", "text": "Lipids are\nstored in the body mainly in the form of?", "options": ["Bile acid", "Triglycerides", "Glycine", "Linolenic acid"], "correct_index": 1, "solution": "Triglycerides"}, {"id": "65493e1e8002b77ff9ded98c", "text": "The hormone\ninvolved in the secretion & regulation of milk?", "options": ["TSH", "FSH", "Prolactin", "Thyroxine"], "correct_index": 2, "solution": "Prolactin"}, {"id": "65493e1e8002b7286dded969", "text": "Which of the\nfollowing are an essential-fatty acids?", "options": ["Linolenic acid", "alpha Linolenic acid", "Arachidonic acid", "All of the above"], "correct_index": 3, "solution": "All of the above"}, {"id": "65493e1e8002b706d9ded9eb", "text": "Vitamin A is\nalso called?", "options": ["Anti scurvitic\nvitamin", "Anti sterilitic\nvitamin", "Anti\nhaemorrhagic vitamin", "Anti\nxerophthalic vitamin"], "correct_index": 3, "solution": "Anti\nxerophthalic vitamin"}, {"id": "65493e1e8002b7c97eded996", "text": "Select a\nfat-soluble vitamin?", "options": ["Ascorbic acid", "Tocopherol", "Thiamine", "Riboflavin"], "correct_index": 1, "solution": "Tocopherol"}, {"id": "65493e1e8002b7d73bded9af", "text": "The toxic\nprotein present in castor oil is?", "options": ["Ricinoleic acid", "Ricin", "Iso ricinoleic\nacid", "Linoleic acid"], "correct_index": 1, "solution": "Ricin"}, {"id": "65493e1e8002b7bdd4deda36", "text": "Mevalonic acid\nformation is catalysed by the enzyme?", "options": ["Acetyl-CoA", "Mevalonate\nkinase", "HMG-CoA\nreductase", "Phosphomevalonate"], "correct_index": 2, "solution": "HMG-CoA\nreductase"}, {"id": "65493e1e8002b75d17ded9fa", "text": "Total energy\ngained from one mol of glucose under aerobic condition is?", "options": ["8 ATP", "38 ATP", "12 ATP", "36 ATP"], "correct_index": 3, "solution": "36 ATP"}, {"id": "65493e1e8002b759fededa18", "text": "Avicel is the\ntrade name of?", "options": ["Starch", "Methyl cellulose", "Microcrystalline\ncellulose", "Chitosan"], "correct_index": 2, "solution": "Microcrystalline\ncellulose"}, {"id": "65493e1e8002b7415aded9b4", "text": "Anti\nxerophthalmic vitamin is?", "options": ["Vitamin E", "Vitamin D", "Vitamin B", "Vitamin A"], "correct_index": 3, "solution": "Vitamin A"}, {"id": "65493e1e8002b77448ded946", "text": "Vitamin is known\nas anti-haemorrahagic factor?", "options": ["Vitamin E", "Vitamin C", "Vitamin K", "None of these"], "correct_index": 2, "solution": "Vitamin K"}, {"id": "65493e1e8002b76b96ded95a", "text": "FAD & FMN\nare coenzymes from of?", "options": ["Thiamine", "Riboflavin", "Ascorbic acid", "Niacin"], "correct_index": 1, "solution": "Riboflavin"}, {"id": "65493e1e8002b782fbded937", "text": "Main building\nblock for fatty acid synthesis?", "options": ["Pcyl-CoA", "Acetyl-CoA", "Ketoacyl-CoA", "Malonyl-CoA"], "correct_index": 1, "solution": "Acetyl-CoA"}, {"id": "65493e1e8002b77c62ded9cd", "text": "Vitamin present\nin Co enzyme A?", "options": ["Riboflavin", "Pyridoxine", "Biotin", "Pantothenic acid"], "correct_index": 3, "solution": "Pantothenic acid"}, {"id": "65493e1e8002b76ceeded9a0", "text": "Which of the\nfollowing enzymes has fibrinolytic activity?", "options": ["Pepsin", "Urokinase", "L-asparaginase", "Lydaze"], "correct_index": 1, "solution": "Urokinase"}, {"id": "65493e1e8002b72850dedadb", "text": "The product\nformed when amino acid molecules combine together is called?", "options": ["Nucleic acid", "Starch", "Carbohydrate", "Proteins"], "correct_index": 3, "solution": "Proteins"}, {"id": "65493e1e8002b75dd6ded928", "text": "Protein\nsynthesis within human cells occurs in the", "options": ["Peroxisomes", "Lysosomes", "Mitochondria", "Ribosomes"], "correct_index": 3, "solution": "Ribosomes"}, {"id": "65493e1e8002b782c4ded941", "text": "Anti-sterility\nvitamin is?", "options": ["Vitamin B12", "Vitamin D", "Vitamin E", "Vitamin C"], "correct_index": 2, "solution": "Vitamin E"}, {"id": "65493e1e8002b77a37ded93c", "text": "Which of the\nfollowing food constituents is not digested but is still important\nfor us", "options": ["Vitamins", "Proteins", "Fibre", "Minerals"], "correct_index": 2, "solution": "Fibres"}, {"id": "65493e1e8002b744e9deda86", "text": "From which fatty\nacid prosta-glandins are synthesized?", "options": ["Linoleic acid", "Linolenic acid", "Oleic acid", "Palmitic acid"], "correct_index": 0, "solution": "Linoleic acid"}, {"id": "65493e1e8002b7de71ded9d2", "text": "Which among the\nfollowing is a non-reducing sugar?", "options": ["Sucrose", "Glucose", "Maltose", "Lactose"], "correct_index": 0, "solution": "Sucrose"}, {"id": "65493e1e8002b7cdc7deda81", "text": "Quabain a\ncardiac glycoside specifically inhibit which of the active\ntransport system?", "options": ["H+- K\n+ ATPase", "Ca + ATPase", "Na+ -\nK + ATPase", "H + ATPase"], "correct_index": 2, "solution": "Na+ -\nK + ATPase"}, {"id": "65493e1e8002b7edf1deda3b", "text": "Enzyme referred\nas spreading factor?", "options": ["Heparin", "Chendriotin", "Hyalouonidase", "Iduronic acid"], "correct_index": 2, "solution": "Hyalouonidase"}, {"id": "65493e1e8002b72a28deda31", "text": "Which of the\nfollowing vitamin is associated with synthesis of coagulation\nfactor?", "options": ["Vitamin A", "Vitamin C", "Vitamin E", "Vitamin K"], "correct_index": 3, "solution": "Vitamin K"}, {"id": "65493e1e8002b7a394ded9c3", "text": "Which one of the\nfollowing is referred to as good cholesterol?", "options": ["Tri glycerides", "High density\nlipoproteins", "Low density\nlipoproteins", "Chylomicrons"], "correct_index": 1, "solution": "High density\nlipoproteins"}, {"id": "65493e1e8002b70266ded8d8", "text": "Protein energy\nmalnutrition result in?", "options": ["Diabetes", "Marasmus", "Night blindness", "Dry skin"], "correct_index": 1, "solution": "Marasmus"}, {"id": "65493e1e8002b721d6ded8e2", "text": "The tear\nsecretion contains an anti-bacterial enzyme known as?", "options": ["Zymase", "Diastase", "Lysozyme", "Lipase"], "correct_index": 2, "solution": "Lysozyme"}, {"id": "65493e1e8002b7cf0ededaa4", "text": "Which metal ion\nis present in ascorbic acid oxidase?", "options": ["Zn", "Mg", "Fe", "Cu"], "correct_index": 3, "solution": "Cu"}, {"id": "65493e1e8002b7c89ededacc", "text": "The drug\nimatinib acts by the inhibition of?", "options": ["Tyrosine kinase", "Glutathione\nreductase", "Thymidylate\nsynthetase", "Protein kinase"], "correct_index": 0, "solution": "Tyrosine kinase"}, {"id": "65493e1e8002b7f866ded9aa", "text": "Enzyme drug used\nfor acute leukemia treatment?", "options": ["Di-hydrololate\nreductase", "Asparaginase", "Aromatase", "DNA gyrase"], "correct_index": 0, "solution": "Di-hydrololate\nreductase"}, {"id": "65493e1e8002b726efdeda45", "text": "Which vitamin is\nknown as anti-sterility factor?", "options": ["Vitamin K", "Vitamin D", "Vitamin E", "Vitamin A"], "correct_index": 2, "solution": "Vitamin E"}, {"id": "65493e1e8002b720aededa7c", "text": "The unique\nC-terminal sequence of ER resident proteins of mammals is?", "options": ["Leu-Asp-Glu-Lys", "Lys-Asp-Glu-Leu", "Leu-Glu-Asp-Lys", "Lys-Asp-Leu-Glu"], "correct_index": 1, "solution": "Lys-Asp-Glu-Leu"}, {"id": "65493e1e8002b78400ded96e", "text": "Edman’s\nreagent is chemically?", "options": ["Phenyl\niso-thio-propionate", "Phenyl\niso-thio-cyanate", "Phenyl\nthio-cyanate", "Phenyl\nbutyl-propionate"], "correct_index": 1, "solution": "Phenyl\niso-thio-cyanate"}, {"id": "65493e1e8002b7b074ded8ec", "text": "Vitamin B12\ndeficiency leads to?", "options": ["Megaloblastic\nanaemia", "Aplastic anaemia", "Hypochromic\nmicrocytic anaemia", "Normochromic\nnormocytic anaemia"], "correct_index": 0, "solution": "Megaloblastic\nanaemia"}, {"id": "65493e1e8002b70c67dedad1", "text": "Water soluble\nvitamin is?", "options": ["Vitamin A", "Vitamin B", "Vitamin D", "Vitamin K"], "correct_index": 1, "solution": "Vitamin B"}, {"id": "65493e1e8002b7d7f2dedaa9", "text": "Acid phosphatase\nis the marker enzyme for which sub cellular fraction?", "options": ["Cytosol", "Peroxisomes", "Lysosomes", "Microsomes"], "correct_index": 2, "solution": "Lysosomes"}, {"id": "65493e1e8002b7ba23ded97d", "text": "Rickets is\ncaused by deficiency of which vitamin?", "options": ["Vitamin A", "Vitamin B", "Vitamin D", "Vitamin E"], "correct_index": 2, "solution": "Vitamin D"}, {"id": "65493e1e8002b72b10ded92d", "text": "Example of an\naliphatic amino acid?", "options": ["Cysteine", "Glycine", "Phenyl alanine", "Arginine"], "correct_index": 1, "solution": "Glycine"}, {"id": "65493e1e8002b759c0ded9f5", "text": "Albinism is\nproduced due to the defect in biosynthesis of?", "options": ["Tyrosine", "Melanin", "Valine", "Iso leucine"], "correct_index": 1, "solution": "Melanin"}, {"id": "65493e1e8002b77378ded9b9", "text": "Pyridoxine is?", "options": ["Vitamin B1", "Vitamin B2", "Vitamin B6", "Folic acid"], "correct_index": 2, "solution": "Vitamin B6"}, {"id": "65493e1e8002b720d0ded991", "text": "Goldbeater’s\nskin test is used to detect?", "options": ["Glue", "Glycosides", "Tannins", "Phenols"], "correct_index": 2, "solution": "Tannins"}, {"id": "65493e1e8002b7b7b7ded905", "text": "Identify the\nvitamin resembling a hormone?", "options": ["VitaminA", "Vitamin B5", "Vitamin B6", "Vitamin D"], "correct_index": 3, "solution": "Vitamin D"}, {"id": "65493e1e8002b76a36ded955", "text": "The level of\ncreatinine is analysed by?", "options": ["Hay’s test", "Gmelin test", "Urease test", "Jaffe’s\ntest"], "correct_index": 3, "solution": "Jaffe’s\ntest"}, {"id": "65493e1e8002b73696deda77", "text": "Which of the\nfollowing is a cysteine protease?", "options": ["Thrombin", "SWubtilin", "Elastase", "Papain"], "correct_index": 2, "solution": "Elastase"}, {"id": "65493e1e8002b75c33ded919", "text": "Corpus luteum is\nmaintained by?", "options": ["FHS", "Estrogen", "HCG", "Oxytocin"], "correct_index": 2, "solution": "HCG"}, {"id": "65493e1e8002b76d78deda22", "text": "Mevalonic acid\nformation is catalysed by the enzyme?", "options": ["Acetyl-CoA", "Phosphomevalonate\nkinase", "Mevalonate\nkinase", "HMG-CoA\nreductase"], "correct_index": 3, "solution": "HMG-CoA\nreductase"}, {"id": "65493e1e8002b7f3a7deda63", "text": "The lipoprotein\nwhich helps the transport of TAG synthesized by the liver is?", "options": ["Chylo-micrones", "VLDL", "LDL", "HDL"], "correct_index": 1, "solution": "VLDL"}, {"id": "65493e1e8002b730e7ded94b", "text": "Pepsin enzyme is\npresent in?", "options": ["Gastric juice", "Bile juice", "Pancreatic juice", "Saccus interecus"], "correct_index": 0, "solution": "Gastric juice"}, {"id": "65493e1e8002b75cb8ded964", "text": "Which test is\nused to check the purity of butter containing good conc. Of\nvolatile fatty acid?", "options": ["Reichert-Meissl\nNo.", "Acid No.", "Iodine No.", "Ash value"], "correct_index": 0, "solution": "Reichert-Meissl\nNo."}, {"id": "65493e1e8002b79718ded90f", "text": "Thromboxane A2\nis released mainly by?", "options": ["T lymphocytes", "Liver", "Muscles", "Platelets"], "correct_index": 3, "solution": "Platelets"}, {"id": "65493e1e8002b76fb8ded9c8", "text": "Non sugar parts\nof the glycosides are called?", "options": ["Aglycon", "Glycon", "Glycogen", "Glycol"], "correct_index": 0, "solution": "Aglycon"}, {"id": "65493e1e8002b73f36deda40", "text": "Enzyme which is\nused in the treatment of leukaemia?", "options": ["Urokinase", "Streptokinase", "Asparginase", "Pepsin"], "correct_index": 2, "solution": "Asparginase"}, {"id": "65493e1e8002b7dbb6ded978", "text": "Haemoglobin is\nthe following by nature?", "options": ["Enzyme", "Protein", "Hormone", "Carbohydrate"], "correct_index": 1, "solution": "Protein"}, {"id": "65493e1e8002b74972deda04", "text": "The vitamin\nwhich is given in severe cases of alcoholism is?", "options": ["Ascorbic acid", "Riboflavin", "Thiamine", "Pyridoxine"], "correct_index": 2, "solution": "Thiamine"}, {"id": "65493e1e8002b73768deda9f", "text": "Which of the\nfollowing is not a component of dietary fiber?", "options": ["Cellulose", "Agar", "Lignin", "Pectin"], "correct_index": 1, "solution": "Agar"}, {"id": "65493e1e8002b733e9ded987", "text": "Sterols belongs\nto the class of?", "options": ["Lipids", "Waxes", "Carbohydrates", "Proteins"], "correct_index": 0, "solution": "Lipids"}, {"id": "65493e1e8002b783eededa95", "text": "An uncompetitive\ninhibitor binds to?", "options": ["Enzyme-substrate\ncomplex", "Enzyme", "Product", "Substrate"], "correct_index": 0, "solution": "Enzyme-substrate\ncomplex"}, {"id": "65493e1e8002b74d85ded9dc", "text": "Which among the\nfollowing vitamin have a naphtha-quinone ring?", "options": ["Vitamin E", "Vitamin K", "Vitamin D", "Vitamin B12"], "correct_index": 1, "solution": "Vitamin K"}, {"id": "65493e1e8002b7b882dedac7", "text": "The fat-soluble\nvitamins are?", "options": ["B complex, C &\nD", "A, D, E & K", "A, B, C & D", "B complex, E &\nK"], "correct_index": 1, "solution": "A, D, E & K"}, {"id": "65493e1e8002b754acded973", "text": "Aspartame is?", "options": ["Methyl ester of\naspartic acid & ornithine", "Ethyl ester of\naspartic acid & phenyl alanine", "Methyl ester of\naspartic acid & phenyl alanine", "None of the\nabove"], "correct_index": 2, "solution": "Methyl ester of\naspartic acid & phenyl alanine"}, {"id": "65493e1e8002b77b18dedac2", "text": "Treatment of\nover-dosage of warfarin is by?", "options": ["Heparin", "Vitamin K", "Danaparoid", "Folic acid"], "correct_index": 1, "solution": "Vitamin K"}, {"id": "65493e1e8002b73f60ded9e6", "text": "Grease spot test\nis used to identify?", "options": ["Protein", "Carbohydrate", "Lipid", "Alkaloid"], "correct_index": 2, "solution": "Lipid"}, {"id": "65493e1e8002b773fbded982", "text": "The constituent\nof cholesterol termed as bad cholesterol is?", "options": ["HDL", "LDL", "VLDL", "Triglycerides"], "correct_index": 1, "solution": "LDL"}, {"id": "65493e1e8002b72402ded932", "text": "Which vitamin is\nalso known as coagulation factor?", "options": ["Vitamin K", "Vitamin E", "Vitamin D", "Vitamin C"], "correct_index": 0, "solution": "Vitamin K"}, {"id": "65493e1e8002b7906aded90a", "text": "Which among the\nfollowing is used for physiological control of PH?", "options": ["Iron", "Alum", "Hydrogen\nperoxide", "Magnesium\ntrisilicate oral suspension"], "correct_index": 3, "solution": "Magnesium\ntrisilicate oral suspension"}, {"id": "65493e1e8002b7c0d6ded9a5", "text": "This drug both\ninhibits an enzyme & indirectly enhances clearance of low\ndensity lipoproteins (LDL)", "options": ["Cholestyramine", "Lovastatin", "Nicotinic acid", "Probucol"], "correct_index": 1, "solution": "Lovastatin"}, {"id": "65493e1e8002b71eb6ded8e7", "text": "Functional unit\nof enzyme is known as?", "options": ["Apoenzyme", "Prosthetic group", "Coenzyme", "Holoenzyme"], "correct_index": 3, "solution": "Holoenzyme"}, {"id": "65493e1e8002b767d5deda0e", "text": "Vitamin B3 is?", "options": ["Biotin", "Pyridoxine", "Thiamine", "Niacin"], "correct_index": 3, "solution": "Niacin"}, {"id": "65493e1e8002b72e93ded9e1", "text": "Kwasshiorkor is\na disease associated with the deficiency of?", "options": ["Vitamin B12", "Vitamin D", "Carbohydrate", "Protein"], "correct_index": 3, "solution": "Protein"}, {"id": "65493e1e8002b7457bded9d7", "text": "Vitamin present\nin the shark liver oil?", "options": ["Vitamin A", "Vitamin D", "Vitamin K", "Vitamin E"], "correct_index": 0, "solution": "Vitamin A"}, {"id": "65493e1e8002b78a42deda72", "text": "The cofactor of\nglycogen phosphorylase is?", "options": ["TPP", "PLP", "NADH", "CoA"], "correct_index": 1, "solution": "PLP"}, {"id": "65493e1e8002b7c38fdeda9a", "text": "The coenzyme\ninvolved in carboxylation reaction is?", "options": ["FDA", "CoA", "TPP", "Biotin"], "correct_index": 3, "solution": "Biotin"}, {"id": "65493e1e8002b75580ded95f", "text": "Which is not an\nessential amino acid?", "options": ["Threonine", "Tryptophan", "Valin", "Glutamine"], "correct_index": 3, "solution": "Glutamine"}, {"id": "65493e1e8002b7762ededa6d", "text": "Activation of\ngluconeogenesis in liver is achieved by inhibiting one of the key\nenzymes in the glycolysis. Which of the following enzyme is\ninhibited?", "options": ["Hexokinase", "Phospho-fructo-kinase\n1", "Pyruvate kinase", "Phospho-fructo-kinase\n2"], "correct_index": 2, "solution": "Pyruvate kinase"}, {"id": "65493e1e8002b715cededa68", "text": "The deficiency\nof which vitamin results in pernicious anaemia?", "options": ["Thiamine", "Riboflavin", "Niacin", "Cobalamin"], "correct_index": 3, "solution": "Cobalamin"}, {"id": "65493e1e8002b76a14dedab3", "text": "Pellagra is due\nto the deficiency of?", "options": ["Niacin", "Thiamine", "Vitamin B12", "Vitamin C"], "correct_index": 0, "solution": "Niacin"}, {"id": "65493e1e8002b7b717ded914", "text": "The VDRL is used\nfor diagnosis of?", "options": ["Hepatitis", "Syphilis", "Typhoid", "Cholera"], "correct_index": 1, "solution": "Syphilis"}, {"id": "65493e1e8002b79b12ded9f0", "text": "Physically\ndistinct forms of same enzyme are called?", "options": ["Isoenzyme", "Co-enzyme", "Apo enzyme", "Holo enzyme"], "correct_index": 0, "solution": "Isoenzyme"}, {"id": "65493e1e8002b70ad6ded8fb", "text": "Choose the\ncorrect pH of lachrymal fluid?", "options": ["8.0", "6.2", "7.4", "9.0"], "correct_index": 2, "solution": "7.4"}, {"id": "65493e1e8002b77ca2deda1d", "text": "Biotin is?", "options": ["Vitamin C", "Vitamin E", "Vitamin H", "Vitamin D"], "correct_index": 2, "solution": "Vitamin H"}, {"id": "65493e1e8002b76133dedad6", "text": "The energy value\nof -------- is more than that of others?", "options": ["Fats", "Starch", "Protein", "Sugar"], "correct_index": 0, "solution": "Fats"}, {"id": "65493e1e8002b74617deda90", "text": "Which class of\nenzyme catalyses the oxidation of an alcohol to an aldehyde?", "options": ["Ligase", "Isomerase", "Oxido-redutase", "Lyase"], "correct_index": 2, "solution": "Oxido-redutase"}, {"id": "65493e1e8002b78318deda27", "text": "An enzyme that\nworks in an acidic medium is?", "options": ["Pepsin", "Trypsin", "Ptyalin", "Maltose"], "correct_index": 0, "solution": "Pepsin"}, {"id": "65493e1e8002b7fb87dedae0", "text": "Limiting amino\nacid in plus is?", "options": ["Lysine", "Threonine", "Methionine", "Valine"], "correct_index": 2, "solution": "Methionine"}, {"id": "65493e1e8002b70817deda2c", "text": "Excessive doses\nof the following vitamin may be harmful?", "options": ["Thiamine", "Pyridoxine", "Ascorbic acid", "Vitamin A"], "correct_index": 3, "solution": "Vitamin A"}, {"id": "65493e1e8002b77f19deda09", "text": "The enzyme which\nis known as spreading factor?", "options": ["Collagenase", "Hyalluronidase", "Lecithinase", "Haemolysins"], "correct_index": 1, "solution": "Hyalluronidase"}, {"id": "65493e1e8002b71f08dedabd", "text": "Vitamin B6\nis given with isoniazide prophyl-acticalcy topreventing?", "options": ["Rickctisial\ninfection", "Nephrotoxicity", "Neurotoxicity", "Hepatitis"], "correct_index": 2, "solution": "Neurotoxicity"}, {"id": "65493e1e8002b753abded8dd", "text": "Milk is\ndeficient in which vitamins?", "options": ["Vitamin C", "Vitamin A", "Vitamin B2", "Vitamin K"], "correct_index": 0, "solution": "Vitamin C"}, {"id": "65493e1e8002b717c2ded9be", "text": "Sucrose is a", "options": ["Hexose", "Mono saccharides", "Di saccharides", "Poly saccharides"], "correct_index": 2, "solution": "Di saccharides"}, {"id": "65493e1e8002b7e708deda13", "text": "Drugs used to\naid digestion in the git?", "options": ["Pepsin", "Probucol", "Gugu-lipid", "Pectin"], "correct_index": 0, "solution": "Pepsin"}, {"id": "65493e1e8002b7d487ded950", "text": "Which of the\nfollowing increase the speed of biochemical reactions?", "options": ["Antibiotics", "Hormones", "Enzymes", "Monoclonal\nantibodies"], "correct_index": 2, "solution": "Enzymes"}, {"id": "65493e1e8002b72985deda8b", "text": "Which of the\nfollowing amino acids is degraded finally to succinyl-coA?", "options": ["Aspargine", "Proline", "Methionine", "Arginine"], "correct_index": 2, "solution": "Methionine"}, {"id": "65493e1e8002b75a8bdeda4a", "text": "Renin a\nproteolytic enzyme which is produced in?", "options": ["Brain", "Liver", "Spleen", "Kidney"], "correct_index": 3, "solution": "Kidney"}, {"id": "65493e1e8002b7ce31ded8f6", "text": "Which one of the\nfollowing is a rate limiting enzyme of glycolysis?", "options": ["Hexokinase", "Phosphofructokinase", "Pyruvate\ncarboxylase", "Pyruvate kinase"], "correct_index": 1, "solution": "Phosphofructokinase"}, {"id": "65493e1e8002b75482ded923", "text": "The test used\nfor the detection of typhoid fever?", "options": ["Dick test", "Widal test", "Mantoux test", "Schick test"], "correct_index": 1, "solution": "Widal test"}, {"id": "65493e1e8002b7c586deda59", "text": "Which of the\nfollowing amino acids are both ketogenic & glucogenic?", "options": ["Leucine", "Alanine", "Aspartic acid", "Isoleucine"], "correct_index": 3, "solution": "Isoleucine"}, {"id": "65493e1e8002b79d67deda4f", "text": "Yeast is the\nrichest source of?", "options": ["Vitamin C", "Vitamin B", "Vitamin D", "Vitamin C"], "correct_index": 1, "solution": "Vitamin B"}, {"id": "65493e1e8002b776a7ded9ff", "text": "Microcytic hypo\nchromic anaemia is caused by the deficiency of?", "options": ["Vitamin B12", "Riboflavin", "Iron", "Folic acid"], "correct_index": 2, "solution": "Iron"}];
+const POS = 4; const NEG = -1;
+let TOTAL_SECONDS = 5400;
+
+let current=0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let visited = new Array(QUESTIONS.length).fill(false);
+let review  = new Array(QUESTIONS.length).fill(false);
+let timerInterval;
+
+function renderQ(i){
+  current=i; visited[i]=true;
+  const q = QUESTIONS[i] || {};
+  document.getElementById('qid').textContent = 'Question-'+(i+1);
+  document.getElementById('qtext').textContent = q.text || '';
+  const box = document.getElementById('opts'); box.innerHTML='';
+  (q.options||[]).forEach((op,j)=>{
+    const row = document.createElement('label'); row.className='opt'+(answers[i]===j?' selected':'');
+    const dot = document.createElement('span'); dot.className='rdot';
+    const input = document.createElement('input'); input.type='radio'; input.name='q'+i; input.value=String(j); input.style.display='none';
+    input.checked = (answers[i]===j);
+    input.onchange = ()=>{ answers[i]=j; renderQ(i); refreshStats(); };
+    row.appendChild(dot); row.appendChild(input); row.append(' '+op);
+    row.onclick = (ev)=>{ if(ev.target.tagName!=='INPUT'){ input.checked=true; input.dispatchEvent(new Event('change')); } };
+    box.appendChild(row);
+  });
+  highlightPalette();
+}
+
+function buildPalette(){
+  const pal = document.getElementById('pal'); pal.innerHTML='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const d = document.createElement('div'); d.className='p'; d.textContent = i+1;
+    d.onclick=()=>renderQ(i); pal.appendChild(d);
+  }
+  highlightPalette(); refreshStats();
+}
+function highlightPalette(){
+  const pal = document.getElementById('pal').children;
+  for(let i=0;i<pal.length;i++){
+    let cls='p';
+    if(!visited[i]){}
+    else if(answers[i]===null && !review[i]) cls+=' not-answered';
+    else if(answers[i]!==null && review[i]) cls+=' answered'; // treat as answered for color; review tracked separately
+    else if(answers[i]!==null) cls+=' answered';
+    else if(review[i]) cls+=' not-answered';
+    if(i===current) cls+=' active';
+    pal[i].className = cls;
+  }
+}
+function refreshStats(){
+  const pal = document.getElementById('pal').children;
+  let ans=0, na=0, rev=0, nv=0;
+  for(let i=0;i<pal.length;i++){
+    if(!visited[i]) nv++;
+    if(review[i]) rev++;
+    if(visited[i] && answers[i]===null) na++;
+    if(answers[i]!==null) ans++;
+  }
+  document.getElementById('sAns').textContent=ans;
+  document.getElementById('sNot').textContent=na;
+  document.getElementById('sRev').textContent=rev;
+  document.getElementById('sNov').textContent=nv;
+}
+function prevQ(){ if(current>0) renderQ(current-1); }
+function saveNext(){ if(current<QUESTIONS.length-1) renderQ(current+1); }
+function clearResp(){ answers[current]=null; renderQ(current); refreshStats(); }
+function toggleReview(){ review[current]=!review[current]; highlightPalette(); refreshStats(); }
+
+function finish(){
+  // stop timer
+  if (typeof timerInterval!=='undefined') try{ clearInterval(timerInterval); }catch(e){}
+
+  let score=0,correct=0,wrong=0,attempted=0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    const c=(QUESTIONS[i]||{}).correct_index;
+    const a=answers[i];
+    if(a!==null) attempted++;
+    if(c==null || a==null) continue;
+    if(Number(a)===Number(c)) {score+=POS;correct++;} else {score+=NEG;wrong++;}
+  }
+  const unattempted = QUESTIONS.length - attempted;
+
+  // hide exam, show results
+  document.getElementById('exam').style.display='none';
+  document.getElementById('result').style.display='block';
+
+  document.getElementById('score').textContent = String(score);
+  document.getElementById('outof').textContent = 'OUT OF '+(POS*QUESTIONS.length);
+  document.getElementById('summary').innerHTML =
+    'Correct: <b>'+correct+'</b> &nbsp; | &nbsp; Wrong: <b>'+wrong+
+    '</b> &nbsp; | &nbsp; Unattempted: <b>'+unattempted+'</b>';
+
+  // solutions
+  const sol = document.getElementById('solutions');
+  let h='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const q=QUESTIONS[i]||{}; const c=q.correct_index; const a=answers[i];
+    h += '<div class="sol"><div style="font-weight:700;margin-bottom:6px">Q.'+(i+1)+'</div>';
+    (q.options||[]).forEach((op,j)=>{
+      let cls='';
+      if(c!=null && j===c) cls=' ok';
+      else if(a!=null && j===a && c!=null && a!==c) cls=' bad';
+      h += '<div class="'+cls+'" >'+op+'</div>';
+    });
+    if(q.solution) h += '<div style="margin-top:6px;color:#334155"><small><b>Solution:</b> '+q.solution+'</small></div>';
+    h += '</div>';
+  }
+  sol.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+/* Timer */
+function startTimer(){
+  if (!TOTAL_SECONDS) return;
+  const t = document.getElementById('timer');
+  function tick(){
+    let m = Math.floor(TOTAL_SECONDS/60);
+    let s = TOTAL_SECONDS%60;
+    t.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if (TOTAL_SECONDS<=0) { clearInterval(timerInterval); return; }
+    TOTAL_SECONDS -= 1;
+  }
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.title = 'Biochemistry Mock Test';
+  buildPalette();
+  if(QUESTIONS.length) renderQ(0);
+  startTimer();
+});
+</script>
+</body></html>
