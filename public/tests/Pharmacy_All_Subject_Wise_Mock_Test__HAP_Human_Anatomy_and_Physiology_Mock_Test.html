@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HAP (Human Anatomy &amp; Physiology) Mock Test</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--border:#e6eaf3;--text:#0b192d;--muted:#6b7280;--blue:#2b8ef6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--purple:#7c3aed;--shadow:0 2px 12px rgba(2,6,23,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+/* Top bar */
+.top{background:#fff;border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:12px}
+.bcrumb{font-weight:700} .bchip{margin-left:10px;background:#eef2ff;border:1px solid #c7d2fe;color:#374151;border-radius:8px;padding:3px 8px;font-weight:700}
+.tsp{flex:1} .timer{background:#eef2ff;border:1px solid #c7d2fe;padding:4px 10px;border-radius:8px;font-weight:700}
+/* Main layout */
+.main{display:grid;grid-template-columns:1fr 340px;gap:16px;max-width:1200px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+/* Question header row (marking + timer + review) */
+.qhdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-weight:700}
+.pill.green{background:#ecfdf5;border-color:#bbf7d0;color:#166534} .pill.red{background:#fee2e2;border-color:#fecaca;color:#991b1b}
+.qwrap{padding:16px}
+.qid{color:#6b7280;font-size:13px;margin-bottom:6px}
+.qtext{font-weight:700;line-height:1.6;margin:6px 0 14px 0}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0;background:#fff;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.rdot{width:16px;height:16px;border-radius:50%;border:2px solid #cbd5e1;background:#fff}
+.opt.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,142,246,.15)}
+/* bottom actions */
+.bottom{display:flex;justify-content:space-between;gap:10px;padding:12px 16px;border-top:1px solid var(--border);background:#fff}
+.btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn.ghost{background:#f8fafc}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Sidebar */
+.sidebar{padding:12px}
+.user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.uav{width:44px;height:44px;border-radius:50%;background:#fee2e2;color:#7f1d1d;font-weight:800;display:flex;align-items:center;justify-content:center}
+.uname{font-weight:700}
+.stat{border-top:1px solid var(--border);padding-top:10px;margin-top:6px}
+.statrow{display:flex;align-items:center;gap:8px;margin:8px 0;color:#111827}
+.sdot{width:10px;height:10px;border-radius:50%}
+.sgreen{background:#22c55e}.sred{background:#ef4444}.sgrey{background:#94a3b8}.spurple{background:#7c3aed}
+.palet{margin-top:10px;border-top:1px solid var(--border);padding-top:12px}
+.palgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.p{height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700}
+.p.active{outline:2px solid var(--purple)} .p.answered{background:#ecfdf5;border-color:#bbf7d0} .p.not-answered{background:#fee2e2;border-color:#fecaca}
+.subwrap{position:sticky;bottom:0;background:#fff;padding-top:12px}
+.submit{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--blue);background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+/* Result screen */
+.result{display:none;max-width:760px;margin:16px auto}
+.rbox{background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:18px}
+.score{font-weight:900;font-size:36px;color:var(--blue);text-align:center}
+.subtle{text-align:center;color:#6b7280}
+.sol{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0}
+.sol .ok{background:#ecfdf5;border:1px solid #bbf7d0;border-radius:8px;padding:8px;margin:6px 0}
+.sol .bad{background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:8px;margin:6px 0}
+@media(max-width:1000px){.main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="bcrumb">HAP (Human Anatomy &amp; Physiology) Mock Test</div>
+    <span class="bchip">HAP</span>
+    <div class="tsp"></div>
+    <div class="timer">Time Left: <span id="timer">--:--</span></div>
+  </div>
+
+  <div id="exam" class="main">
+    <!-- Center paper -->
+    <section class="card">
+      <div class="qhdr">
+        <div class="pill green">+4</div>
+        <div class="pill red">-1</div>
+        <div style="flex:1"></div>
+        <button class="btn ghost" onclick="toggleReview()">★ Mark for review</button>
+      </div>
+
+      <div class="qwrap">
+        <div class="qid" id="qid">Question-1</div>
+        <div class="qtext" id="qtext"></div>
+        <div id="opts"></div>
+      </div>
+
+      <div class="bottom">
+        <button class="btn ghost" onclick="prevQ()">‹ Previous</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" onclick="clearResp()">Clear Response</button>
+          <button class="btn primary" onclick="saveNext()">Save & Next ›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right sidebar -->
+    <aside class="card sidebar">
+      <div class="user">
+        <div class="uav">H</div>
+        <div>
+          <div class="uname">Harsh</div>
+          <div style="color:#6b7280;font-size:12px">Section</div>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="statrow"><span class="sdot sgreen"></span> <b id="sAns">0</b> Answered</div>
+        <div class="statrow"><span class="sdot sred"></span> <b id="sNot">0</b> Not Answered</div>
+        <div class="statrow"><span class="sdot spurple"></span> <b id="sRev">0</b> Marked for Review</div>
+        <div class="statrow"><span class="sdot sgrey"></span> <b id="sNov">0</b> Not Visited</div>
+      </div>
+
+      <div class="palet">
+        <div style="font-weight:700;margin-bottom:8px">HAP</div>
+        <div id="pal" class="palgrid"></div>
+      </div>
+
+      <div class="subwrap">
+        <button class="submit" onclick="finish()">Submit Test</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="result">
+    <div class="rbox">
+      <div class="score" id="score">0</div>
+      <div class="subtle" id="outof">OUT OF 0</div>
+      <div style="height:1px;background:#e5e7eb;margin:14px 0"></div>
+      <div id="summary" style="text-align:center"></div>
+    </div>
+    <div id="solutions" class="rbox" style="margin-top:16px"></div>
+  </div>
+
+<script>
+const QUESTIONS = [{"id": "654d3b9879e2d11775c3bd23", "text": "Auditory\nossicles present in middle ear", "options": ["Malleus", "Stapes", "Incus", "All of these"], "correct_index": 3, "solution": "All of these"}, {"id": "654d3b9879e2d12be0c3bd05", "text": "Which hormone\nmaintains sexual organs and secondary sexual character in male?", "options": ["Testosterone", "Progesterone", "Relaxin", "Estrogen"], "correct_index": 0, "solution": "Testosterone"}, {"id": "654d3b9879e2d16561c3bd1e", "text": "The specific\nregion of hypothalamus responsible for physiological sweat\nsecretion is", "options": ["Supra optic\nnucleus", "Median eminence", "Pars distalis", "Para ventricular\nnucleus"], "correct_index": 3, "solution": "Para ventricular\nnucleus"}, {"id": "654d3b9879e2d12b4dc3bd32", "text": "The only movable\nbone of the skull is", "options": ["Frontal bone", "Mandible", "Maxilla", "Occipital bone"], "correct_index": 1, "solution": "Mandible"}, {"id": "654d3b9879e2d178f1c3bcf1", "text": "Relaxin hormone\nis produced by", "options": ["Pituitary gland", "Prostate gland", "Ovary", "Uterine tube"], "correct_index": 2, "solution": "Ovary"}, {"id": "654d3bd212aff9161b116b59", "text": "Pepsinogen is\nactivated at pH", "options": ["1.0 – 3.5", "7.5 – 8.8", "5.0 – 7.5", "3.5 – 5.5"], "correct_index": 0, "solution": "1.0 – 3.5"}, {"id": "654d3bd212aff95c0d116b72", "text": "When a near\nobject image is focused behind the retina, the defect is known as", "options": ["Myopia", "Hypermyopia", "Astigmatism", "Cataract"], "correct_index": 1, "solution": "Hypermyopia"}, {"id": "654d3b9879e2d125ebc3bcec", "text": "Oxytocin and arginine vasopressin (AVP) are neuropeptides synthesized in", "options": ["Hypothalamus", "Thyroid gland", "Posterior lobe\nof pituitary gland", "Anterior lobe of\npituitary gland"], "correct_index": 0, "solution": "Hypothalamus"}, {"id": "654d3b9879e2d1819bc3bd41", "text": "Which part of\nheart receive deoxygenated blood from human body", "options": ["Right artium", "Right ventricle", "Left atrium", "Left ventricle"], "correct_index": 0, "solution": "Right atrium"}, {"id": "654d3bd212aff953fe116b81", "text": "Blurred vision\ndue to abnormal curvature of lens is known as", "options": ["Myopia", "Hypermyopia", "Astigmatism", "Cataract"], "correct_index": 2, "solution": "Astigmatism"}, {"id": "654d3b9879e2d16df5c3bd4b", "text": "Electrical\nchanges of heart are recorded as", "options": ["EEG", "ECG", "CT scan", "MRI"], "correct_index": 1, "solution": "ECG"}, {"id": "654d3b9879e2d1a317c3bd00", "text": "In adult,\ninsufficient thyroxin can lead to", "options": ["Tetany", "Myxoedema", "Cretinism", "Goiter"], "correct_index": 1, "solution": "Myxoedema"}, {"id": "654d3bd212aff97a3a116bb3", "text": "Colostrum\nsecreted by the mother during initial days of lactation is rich of", "options": ["IgM", "IgA", "IgG", "IgD"], "correct_index": 1, "solution": "IgA"}, {"id": "654d3b9879e2d1a232c3bcc4", "text": "Islet of\nLangerhans cells present in", "options": ["Pituitary gland", "Liver", "Pancreas", "Kidney"], "correct_index": 2, "solution": "Pancreas"}, {"id": "654d3bd212aff91e60116b9f", "text": "Which ion plays\nan important role in blood coagulation?", "options": ["K+", "Na+", "Ca+", "Mg+"], "correct_index": 2, "solution": "Ca+"}, {"id": "654d3b9879e2d16444c3bd3c", "text": "Which one of the\nfollowing muscle is highly resistant to fatigue?", "options": ["Cardiac muscle", "Striped muscle", "Unstriped muscle", "Voluntary muscle"], "correct_index": 0, "solution": "Cardiac muscle"}, {"id": "654d3b9879e2d1440dc3bcf6", "text": "Weight of human\nheart is", "options": ["100 g", "400 g", "300 g", "500 g"], "correct_index": 2, "solution": "300 g"}, {"id": "654d3bd212aff922ad116b8b", "text": "Each kidney\nconsist --------- million nephrons", "options": ["1", "5", "2", "3"], "correct_index": 0, "solution": "1"}, {"id": "654d3bd212aff9f678116b54", "text": "Most of\nglomerular filtrate is reabsorbed from which part of nephron?", "options": ["Proximal tubule", "Distal tubule", "Medullary loop", "Collecting ducts"], "correct_index": 0, "solution": "Proximal tubule"}, {"id": "654d3b9879e2d144a6c3bd28", "text": "Spinal cord and\nbrain are covered in a protective membrane known as", "options": ["meninges", "Thalamus", "Medulla\noblongata", "Hypothalamus"], "correct_index": 0, "solution": "meninges"}, {"id": "654d3bd212aff917ac116b77", "text": "When a far image\nobject is focused in front of retina, the defect is known as", "options": ["Myopia", "Hypermyopia", "Astigmatism", "Cataract"], "correct_index": 0, "solution": "Myopia"}, {"id": "654d3b9879e2d14f18c3bd19", "text": "Which endocrine\ngland contributes to setting the body’s biological clock?", "options": ["Pituitary gland", "Pineal gland", "Thymus gland", "Thyroid gland"], "correct_index": 1, "solution": "Pineal gland"}, {"id": "654d3bd212aff95eec116b9a", "text": "Blood group A+\ncan donate to", "options": ["B+ ,\nAB+", "A+", "A+ & O+", "A+ &\nB+"], "correct_index": 1, "solution": "A+"}, {"id": "654d3b9879e2d1365bc3bd14", "text": "Chemical nature\nof the hormone secreted from pancreas in blood is", "options": ["Steroid", "Glycolipid", "Polypeptide", "Polysaccharide"], "correct_index": 2, "solution": "Polypeptide"}, {"id": "654d3bd212aff9adaa116b7c", "text": "Cataract is\noccurs as a result of", "options": ["Opacity of lens", "Retinal damage", "Refractive error", "Abnormal\ncurvature of cornea"], "correct_index": 0, "solution": "Opacity of lens"}, {"id": "654d3b9879e2d114acc3bcd8", "text": "Which of the\nfollowing cell indirectly help in erythropoiesis?", "options": ["Parietal cells", "Goblet cells", "Chief cells", "Mucus cells"], "correct_index": 0, "solution": "Parietal cells"}, {"id": "654d3bdbdd0180eff6173744", "text": "Weight of a healthy adult uterus is", "options": ["60 gm", "50 gm", "80 gm", "70 gm"], "correct_index": 0, "solution": "60 gm"}, {"id": "654d3b9879e2d14e3ec3bce7", "text": "Histology is the\nstudy of", "options": ["Cells", "Tissue", "Skin", "Organs"], "correct_index": 1, "solution": "Tissue"}, {"id": "654d3b9879e2d10c6ec3bcfb", "text": "Which of the\nendocrine disorder is not correctly matched with their\nmalfunction?", "options": ["Diabetes\nmellitus and pancreas", "Grave disease\nand pituitary gland", "Cushing syndrome\nand adrenal gland", "Tetany and\nparathyroid gland"], "correct_index": 1, "solution": "Grave disease\nand pituitary gland"}, {"id": "654d3b9879e2d11a1ec3bcce", "text": "Which part act\nas the master clock in human body?", "options": ["Muscle", "Heart", "Liver", "Hypothalamus"], "correct_index": 3, "solution": "Hypothalamus"}, {"id": "654d3b9879e2d1ddffc3bd37", "text": "Contractile\nprotein in muscle is", "options": ["Tropomycin", "Myosin", "Tubulin", "All of these"], "correct_index": 1, "solution": "Myosin"}, {"id": "654d3bd212aff9949a116ba9", "text": "Endurance test\nis used to check efficiency of", "options": ["lungs", "Kidney", "Liver", "Brain"], "correct_index": 0, "solution": "Lungs"}, {"id": "654d3bd212aff9557c116b63", "text": "Chemoreceptor\ntrigger zone (CTZ) is present in", "options": ["Cerebrum", "Mid brain", "Cerebellum", "Medulla\noblongata"], "correct_index": 3, "solution": "Medulla\noblongata"}, {"id": "654d3bd212aff951c2116b5e", "text": "Temperature\nregulating centre is present in", "options": ["Medulla\noblongata", "Cerebellum", "Pons", "Hypothalamus"], "correct_index": 3, "solution": "Hypothalamus"}, {"id": "654d3bd212aff97fea116b68", "text": "Which part of\nbrain concern of maintenance of balance and posture?", "options": ["Medulla\noblongata", "Cerebellum", "Pons", "Hypothalamus"], "correct_index": 1, "solution": "Cerebellum"}, {"id": "654d3bd212aff92278116b86", "text": "Glaucoma is\ncharacterized as", "options": ["Defect in\nfocusing of retinal", "Abnormal\ncurvature of lens", "Decreases\nsecretion of aqueous humour", "Increased\nintraocular tension"], "correct_index": 3, "solution": "Increased\nintraocular tension"}, {"id": "654d3b9879e2d1a1a3c3bcdd", "text": "Which cell\norganelle known as suicide bags?", "options": ["Lysosome", "Golgi bodies", "Mitochondria", "Ribosomes"], "correct_index": 0, "solution": "Lysosome"}, {"id": "654d3bd212aff923c5116ba4", "text": "Volume of the\nair remained in lungs after forced expiration is?", "options": ["Tidal volume", "Vital capacity", "Total lung\ncapacity", "Residual volume"], "correct_index": 3, "solution": "Residual volume"}, {"id": "654d3b9879e2d1fb2ac3bce2", "text": "Simple columnar\nepithelium is found in", "options": ["Blood vessel", "Tongue", "Urinary bladder", "Digestive tract\nand gall bladder"], "correct_index": 3, "solution": "Digestive tract\nand gall bladder"}, {"id": "654d3b9879e2d12c2ec3bd0f", "text": "Which of the\nfollowing hormone of endocrine gland and its primary action is\nmismatched?", "options": ["Parathyroid –\nraises blood calcium level", "Somatostatin –\nDecreases glucagon and insulin release", "Calcitonin –\nlower blood calcium level", "Epinephrine –\nlower blood pressure"], "correct_index": 3, "solution": "Epinephrine –\nlower blood pressure"}, {"id": "654d3b9879e2d1fad7c3bcd3", "text": "Hormone secreted\nfrom placenta to maintain pregnancy?", "options": ["HCG, HPL,\nProgesterone, estrogen", "HCG, HPL,\nProgesterone, estrogen, glucocorticoids", "HCG, HPL,\nProgesterone, estrogen, relaxin, oxytocin", "HCG, HPL,\nProgesterone, estrogen, prolactin"], "correct_index": 0, "solution": "HCG, HPL,\nProgesterone, estrogen"}, {"id": "654d3b9879e2d1682fc3bd2d", "text": "Skeletal muscle\nare controlled by", "options": ["Sympathetic\nnerve", "Somatic nerves", "Autonomic nerves", "Parasympathetic\nnerves"], "correct_index": 1, "solution": "Somatic nerves"}, {"id": "654d3b9879e2d11e88c3bd46", "text": "Electrical\nchanges of the brain is recorded as", "options": ["EEG", "CT scan", "ECG", "MRI"], "correct_index": 0, "solution": "EEG"}, {"id": "654d3b9879e2d1502fc3bd0a", "text": "In human body\nsodium and potassium level is regulated by the", "options": ["Vasopressin", "Aldosterone", "Epinephrine", "Cortisol"], "correct_index": 1, "solution": "Aldosterone"}, {"id": "654d3bd212aff94292116bae", "text": "Outermost layer\nof the skin is", "options": ["Stratum corneum", "Pericardium", "Perimetrium", "Tunica\nadventitia"], "correct_index": 0, "solution": "Stratum corneum"}, {"id": "654d3bd212aff98f15116b6d", "text": "Which part of\nbrain is concerned of memory and intelligence?", "options": ["Cerebrum", "Mid brain", "Cerebellum", "Medulla\noblongata"], "correct_index": 0, "solution": "Cerebrum"}, {"id": "654d3b9879e2d10c15c3bcc9", "text": "Which part of\nhuman brain is most developed?", "options": ["Forebrain", "Mid brain", "Hind brain", "None of these"], "correct_index": 0, "solution": "Forebrain"}, {"id": "654d3bd212aff9f4cf116b90", "text": "Urine formation\ntake place in", "options": ["Urinary bladder", "Nephron", "Urethra", "Prostate"], "correct_index": 1, "solution": "Nephron"}, {"id": "654d3bd212aff92f5b116b95", "text": "Anti-diuretic\nhormone is", "options": ["Prolactin", "Vasopressin", "Cortisol", "Thyroxine"], "correct_index": 1, "solution": "Vasopressin"}, {"id": "654d3b9879e2d18100c3bcbf", "text": "Number of\ncervical vertebrate in human are", "options": ["7", "8", "12", "9"], "correct_index": 0, "solution": "7"}];
+const POS = 4; const NEG = -1;
+let TOTAL_SECONDS = 2700;
+
+let current=0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let visited = new Array(QUESTIONS.length).fill(false);
+let review  = new Array(QUESTIONS.length).fill(false);
+let timerInterval;
+
+function renderQ(i){
+  current=i; visited[i]=true;
+  const q = QUESTIONS[i] || {};
+  document.getElementById('qid').textContent = 'Question-'+(i+1);
+  document.getElementById('qtext').textContent = q.text || '';
+  const box = document.getElementById('opts'); box.innerHTML='';
+  (q.options||[]).forEach((op,j)=>{
+    const row = document.createElement('label'); row.className='opt'+(answers[i]===j?' selected':'');
+    const dot = document.createElement('span'); dot.className='rdot';
+    const input = document.createElement('input'); input.type='radio'; input.name='q'+i; input.value=String(j); input.style.display='none';
+    input.checked = (answers[i]===j);
+    input.onchange = ()=>{ answers[i]=j; renderQ(i); refreshStats(); };
+    row.appendChild(dot); row.appendChild(input); row.append(' '+op);
+    row.onclick = (ev)=>{ if(ev.target.tagName!=='INPUT'){ input.checked=true; input.dispatchEvent(new Event('change')); } };
+    box.appendChild(row);
+  });
+  highlightPalette();
+}
+
+function buildPalette(){
+  const pal = document.getElementById('pal'); pal.innerHTML='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const d = document.createElement('div'); d.className='p'; d.textContent = i+1;
+    d.onclick=()=>renderQ(i); pal.appendChild(d);
+  }
+  highlightPalette(); refreshStats();
+}
+function highlightPalette(){
+  const pal = document.getElementById('pal').children;
+  for(let i=0;i<pal.length;i++){
+    let cls='p';
+    if(!visited[i]){}
+    else if(answers[i]===null && !review[i]) cls+=' not-answered';
+    else if(answers[i]!==null && review[i]) cls+=' answered'; // treat as answered for color; review tracked separately
+    else if(answers[i]!==null) cls+=' answered';
+    else if(review[i]) cls+=' not-answered';
+    if(i===current) cls+=' active';
+    pal[i].className = cls;
+  }
+}
+function refreshStats(){
+  const pal = document.getElementById('pal').children;
+  let ans=0, na=0, rev=0, nv=0;
+  for(let i=0;i<pal.length;i++){
+    if(!visited[i]) nv++;
+    if(review[i]) rev++;
+    if(visited[i] && answers[i]===null) na++;
+    if(answers[i]!==null) ans++;
+  }
+  document.getElementById('sAns').textContent=ans;
+  document.getElementById('sNot').textContent=na;
+  document.getElementById('sRev').textContent=rev;
+  document.getElementById('sNov').textContent=nv;
+}
+function prevQ(){ if(current>0) renderQ(current-1); }
+function saveNext(){ if(current<QUESTIONS.length-1) renderQ(current+1); }
+function clearResp(){ answers[current]=null; renderQ(current); refreshStats(); }
+function toggleReview(){ review[current]=!review[current]; highlightPalette(); refreshStats(); }
+
+function finish(){
+  // stop timer
+  if (typeof timerInterval!=='undefined') try{ clearInterval(timerInterval); }catch(e){}
+
+  let score=0,correct=0,wrong=0,attempted=0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    const c=(QUESTIONS[i]||{}).correct_index;
+    const a=answers[i];
+    if(a!==null) attempted++;
+    if(c==null || a==null) continue;
+    if(Number(a)===Number(c)) {score+=POS;correct++;} else {score+=NEG;wrong++;}
+  }
+  const unattempted = QUESTIONS.length - attempted;
+
+  // hide exam, show results
+  document.getElementById('exam').style.display='none';
+  document.getElementById('result').style.display='block';
+
+  document.getElementById('score').textContent = String(score);
+  document.getElementById('outof').textContent = 'OUT OF '+(POS*QUESTIONS.length);
+  document.getElementById('summary').innerHTML =
+    'Correct: <b>'+correct+'</b> &nbsp; | &nbsp; Wrong: <b>'+wrong+
+    '</b> &nbsp; | &nbsp; Unattempted: <b>'+unattempted+'</b>';
+
+  // solutions
+  const sol = document.getElementById('solutions');
+  let h='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const q=QUESTIONS[i]||{}; const c=q.correct_index; const a=answers[i];
+    h += '<div class="sol"><div style="font-weight:700;margin-bottom:6px">Q.'+(i+1)+'</div>';
+    (q.options||[]).forEach((op,j)=>{
+      let cls='';
+      if(c!=null && j===c) cls=' ok';
+      else if(a!=null && j===a && c!=null && a!==c) cls=' bad';
+      h += '<div class="'+cls+'" >'+op+'</div>';
+    });
+    if(q.solution) h += '<div style="margin-top:6px;color:#334155"><small><b>Solution:</b> '+q.solution+'</small></div>';
+    h += '</div>';
+  }
+  sol.innerHTML = h;
+  window.scrollTo(0,0);
+}
+
+/* Timer */
+function startTimer(){
+  if (!TOTAL_SECONDS) return;
+  const t = document.getElementById('timer');
+  function tick(){
+    let m = Math.floor(TOTAL_SECONDS/60);
+    let s = TOTAL_SECONDS%60;
+    t.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if (TOTAL_SECONDS<=0) { clearInterval(timerInterval); return; }
+    TOTAL_SECONDS -= 1;
+  }
+  tick(); timerInterval = setInterval(tick, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.title = 'HAP (Human Anatomy &amp; Physiology) Mock Test';
+  buildPalette();
+  if(QUESTIONS.length) renderQ(0);
+  startTimer();
+});
+</script>
+</body></html>
